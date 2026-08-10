@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Aryn Putra Batik Collection",
-  description: "Pusat belanja batik tulis, cap, dan printing untuk eceran maupun grosir.",
+  description: "Toko online batik khas pekalongan.",
 };
 
 export default function RootLayout({
