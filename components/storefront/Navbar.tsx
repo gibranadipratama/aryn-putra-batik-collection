@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <div className="sticky top-0 z-50 w-full flex flex-col shadow-sm">
       
-      {/* 1. UTILITY BAR (Hanya tampil di Desktop/Tablet besar) */}
+      {/* 1. UTILITY BAR */}
       <div className="hidden md:flex bg-[#D4AF37] text-[#172554] h-10 items-center justify-between px-10 text-[13px] font-bold tracking-widest uppercase">
         <div>Batik Premium Nusantara</div>
         <div className="flex items-center space-x-6">
@@ -29,31 +29,42 @@ export default function Navbar() {
       <header className="w-full bg-[#FFFFF0] border-b border-gray-200 relative">
         <div className="px-4 md:px-10 h-20 flex items-center justify-between">
           
-          {/* TOMBOL MENU MOBILE */}
-          <button 
-            className="lg:hidden p-2 text-[#172554] -ml-2 hover:text-[#D4AF37] transition"
-            onClick={toggleMenu}
-            aria-label="Toggle Menu"
-          >
-            {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
-          </button>
+          {/* KIRI: Tombol Menu (Mobile) & Brand Logo (Desktop) */}
+          <div className="flex-1 flex justify-start items-center">
+            <button 
+              className="lg:hidden p-2 text-[#172554] -ml-2 hover:text-[#D4AF37] transition"
+              onClick={toggleMenu}
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+            </button>
 
-          {/* Navigasi Kiri (Diperbarui dengan Beranda & Katalog) */}
-          <nav className="hidden lg:flex flex-1 items-center gap-6 xl:gap-8 text-[14px] xl:text-[15px] font-bold uppercase tracking-wide text-[#172554]">
-            <Link href="/" className="hover:text-[#D4AF37] transition-colors">Beranda</Link>
-            <Link href="/produk" className="hover:text-[#D4AF37] transition-colors">Katalog</Link>
-            <Link href="/kategori/pria" className="hover:text-[#D4AF37] transition-colors">Pria</Link>
-            <Link href="/kategori/wanita" className="hover:text-[#D4AF37] transition-colors">Wanita</Link>
-          </nav>
+            <Link href="/" className="hidden lg:block">
+              <span className="font-black text-2xl xl:text-3xl text-[#172554] tracking-tighter uppercase">
+                Aryn Putra
+              </span>
+            </Link>
+          </div>
 
-          {/* Tengah: Brand Name */}
-          <Link href="/" className="flex-1 lg:flex-none flex justify-center items-center">
-            <span className="font-black text-2xl md:text-3xl text-[#172554] tracking-tighter uppercase">
-              Aryn Putra
-            </span>
-          </Link>
+          {/* TENGAH: Brand Logo (Mobile) & Navigasi (Desktop) */}
+          <div className="flex-2 flex justify-center items-center">
+            <Link href="/" className="lg:hidden">
+              <span className="font-black text-2xl text-[#172554] tracking-tighter uppercase">
+                Aryn Putra
+              </span>
+            </Link>
 
-          {/* Kanan: Ikon Aksi */}
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-8 text-[13px] xl:text-[14px] font-bold uppercase tracking-wide text-[#172554]">
+              <Link href="/" className="hover:text-[#D4AF37] transition-colors">Beranda</Link>
+              <Link href="/produk" className="hover:text-[#D4AF37] transition-colors">Katalog</Link>
+              <Link href="/kategori/pria" className="hover:text-[#D4AF37] transition-colors">Pria</Link>
+              <Link href="/kategori/wanita" className="hover:text-[#D4AF37] transition-colors">Wanita</Link>
+              <Link href="/kategori/couple" className="hover:text-[#D4AF37] transition-colors">Couple</Link>
+              <Link href="/kategori/lain-lain" className="hover:text-[#D4AF37] transition-colors">Lain-lain</Link>
+            </nav>
+          </div>
+
+          {/* KANAN: Ikon Aksi */}
           <div className="flex-1 flex items-center justify-end gap-3 md:gap-5">
             <button className="hidden sm:block p-2 text-[#172554] hover:text-[#D4AF37] transition">
               <Search className="w-6 h-6" />
@@ -77,8 +88,10 @@ export default function Navbar() {
           <div className="lg:hidden absolute top-20 left-0 w-full bg-[#FFFFF0] border-b border-gray-200 shadow-xl z-50 flex flex-col py-6 px-6 gap-5">
             <Link href="/" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Beranda</Link>
             <Link href="/produk" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Katalog Produk</Link>
-            <Link href="/kategori/pria" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Koleksi Pria</Link>
-            <Link href="/kategori/wanita" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Koleksi Wanita</Link>
+            <Link href="/kategori/pria" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Pria</Link>
+            <Link href="/kategori/wanita" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Wanita</Link>
+            <Link href="/kategori/couple" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Couple</Link>
+            <Link href="/kategori/lain-lain" onClick={toggleMenu} className="text-[#172554] font-bold uppercase tracking-widest text-lg border-b border-[#172554]/10 pb-3 hover:text-[#D4AF37] transition">Lain-lain (Kain, Cargo, Sprei)</Link>
             
             <Link 
               href="/login" 
