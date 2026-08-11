@@ -1,159 +1,62 @@
-import Link from "next/link";
-import { Mail, MapPin, Phone, Clock } from "lucide-react";
-
+import Link from 'next/link';
+import { MapPin, Phone, Mail } from 'lucide-react';
 export default function Footer() {
   return (
-    <footer className="bg-[#172554] text-[#FFFFF0] pt-16 pb-8 border-t-4 border-[#D4AF37]">
-      <div className="w-full px-4 md:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12">
-          {/* Kolom 1: Brand Info */}
-          <div>
-            <h3 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-6 text-[#D4AF37]">
-              Aryn Putra
-            </h3>
-            <p className="text-[#FFFFF0]/80 text-sm md:text-base leading-relaxed mb-6">
-              Menghadirkan mahakarya batik Nusantara dengan kualitas premium.
-              Memadukan tradisi klasik dengan gaya modern yang abadi untuk
-              menemani setiap momen berharga Anda.
+    <footer className="bg-[#102A43] text-[#F7F2E7]">
+      <div className="mx-auto max-w-[1500px] px-5 md:px-10">
+        <div className="grid grid-cols-1 gap-12 border-b border-[#F7F2E7]/10 py-16 md:grid-cols-12 md:py-20">
+          <div className="md:col-span-5">
+            <Link href="/" className="flex flex-col leading-none">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A227]">Batik Collection</span>
+              <span className="mt-2 text-3xl font-black uppercase tracking-[-0.07em] md:text-4xl">ARYN PUTRA</span>
+            </Link>
+            <p className="mt-6 max-w-md text-sm leading-7 text-[#F7F2E7]/55">
+              Koleksi batik pria, wanita, couple, dan kebutuhan lainnya dengan pilihan motif dan model untuk berbagai kesempatan.
             </p>
           </div>
-
-          {/* Kolom 2: Layanan Pelanggan */}
-          <div>
-            <h4 className="text-lg font-bold uppercase tracking-widest mb-6">
-              Layanan Pelanggan
-            </h4>
-            <ul className="space-y-4 text-sm md:text-[15px] text-[#FFFFF0]/80">
-              <li>
-                <Link
-                  href="/bantuan"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Pusat Bantuan (FAQ)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pengiriman"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Informasi Pengiriman
-                </Link>
-              </li>
-              <li>
-                <Link href="/retur" className="hover:text-[#D4AF37] transition">
-                  Kebijakan Retur & Penukaran
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/panduan-ukuran"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Panduan Ukuran
-                </Link>
-              </li>
-            </ul>
+          <div className="md:col-span-2">
+            <h3 className="mb-5 text-[10px] font-black uppercase tracking-[0.25em] text-[#C9A227]">Belanja</h3>
+            <div className="flex flex-col gap-3 text-sm text-[#F7F2E7]/55">
+              <Link href="/produk" className="transition hover:text-[#F7F2E7]">Semua Produk</Link>
+              <Link href="/kategori/pria" className="transition hover:text-[#F7F2E7]">Pria</Link>
+              <Link href="/kategori/wanita" className="transition hover:text-[#F7F2E7]">Wanita</Link>
+              <Link href="/kategori/couple" className="transition hover:text-[#F7F2E7]">Couple</Link>
+              <Link href="/kategori/lain-lain" className="transition hover:text-[#F7F2E7]">Lain-lain</Link>
+            </div>
           </div>
-
-          {/* Kolom 3: Kategori / Koleksi */}
-          <div>
-            <h4 className="text-lg font-bold uppercase tracking-widest mb-6">
-              Kategori Produk
-            </h4>
-            <ul className="space-y-4 text-sm md:text-[15px] text-[#FFFFF0]/80">
-              <li>
-                <Link
-                  href="/kategori/pria"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Koleksi Pria
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/kategori/wanita"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Koleksi Wanita
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/kategori/couple"
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  Koleksi Couple
-                </Link>
-              </li>
-
-              <li className="pt-2">
-                <span className="block mb-3 font-semibold text-[#FFFFF0]">
-                  Koleksi Lainnya:
-                </span>
-                <div className="flex flex-col gap-3 pl-4 border-l-2 border-[#D4AF37]/50">
-                  <Link
-                    href="/kategori/kain"
-                    className="hover:text-[#D4AF37] transition"
-                  >
-                    Kain Batik 2 Meter
-                  </Link>
-                  <Link
-                    href="/kategori/cargo"
-                    className="hover:text-[#D4AF37] transition"
-                  >
-                    Celana Cargo
-                  </Link>
-                  <Link
-                    href="/kategori/sprei"
-                    className="hover:text-[#D4AF37] transition"
-                  >
-                    Sprei Premium
-                  </Link>
-                </div>
-              </li>
-            </ul>
+          <div className="md:col-span-2">
+            <h3 className="mb-5 text-[10px] font-black uppercase tracking-[0.25em] text-[#C9A227]">Bantuan</h3>
+            <div className="flex flex-col gap-3 text-sm text-[#F7F2E7]/55">
+              <Link href="/bantuan" className="transition hover:text-[#F7F2E7]">Pusat Bantuan</Link>
+              <Link href="/pengiriman" className="transition hover:text-[#F7F2E7]">Informasi Pengiriman</Link>
+              <Link href="/retur" className="transition hover:text-[#F7F2E7]">Retur & Penukaran</Link>
+              <Link href="/panduan-ukuran" className="transition hover:text-[#F7F2E7]">Panduan Ukuran</Link>
+            </div>
           </div>
-
-          {/* Kolom 4: Kontak */}
-          <div>
-            <h4 className="text-lg font-bold uppercase tracking-widest mb-6">
-              Hubungi Kami
-            </h4>
-            <ul className="space-y-4 text-sm md:text-[15px] text-[#FFFFF0]/80">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
-                <span className="leading-relaxed">Pekalongan, Jawa Tengah</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#D4AF37] shrink-0" />
-                <span>WA: 081542622909</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#D4AF37] shrink-0" />
+          <div className="md:col-span-3">
+            <h3 className="mb-5 text-[10px] font-black uppercase tracking-[0.25em] text-[#C9A227]">Hubungi Kami</h3>
+            <div className="space-y-4 text-sm text-[#F7F2E7]/55">
+              <div className="flex gap-3">
+                <MapPin className="h-4 w-4 shrink-0 text-[#C9A227]" />
+                <span>Pekalongan, Jawa Tengah</span>
+              </div>
+              <div className="flex gap-3">
+                <Phone className="h-4 w-4 shrink-0 text-[#C9A227]" />
+                <span>0815 4262 2909</span>
+              </div>
+              <div className="flex gap-3">
+                <Mail className="h-4 w-4 shrink-0 text-[#C9A227]" />
                 <span>bgssanap9@gmail.com</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-[#D4AF37] shrink-0" />
-                <span>Jam Operasional: 09:00 - 17:00</span>
-              </li>
-            </ul>
+              </div>
+              <p className="pt-1 text-xs text-[#F7F2E7]/35">Senin - Sabtu · 09:00 - 17:00</p>
+            </div>
           </div>
         </div>
-
-        {/* Bottom: Copyright & Legal */}
-        <div className="pt-8 border-t border-[#FFFFF0]/20 flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm text-[#FFFFF0]/50">
-          <p>
-            &copy; {new Date().getFullYear()} Aryn Putra Batik Collection. Hak
-            Cipta Dilindungi.
-          </p>
-          <div className="flex gap-4">
-            <Link href="/privasi" className="hover:text-[#FFFFF0] transition">
-              Kebijakan Privasi
-            </Link>
-            <Link href="/syarat" className="hover:text-[#FFFFF0] transition">
-              Syarat & Ketentuan
-            </Link>
+        <div className="flex flex-col justify-between gap-4 py-6 text-[10px] font-bold uppercase tracking-[0.15em] text-[#F7F2E7]/30 md:flex-row">
+          <p>© {new Date().getFullYear()} ARYN PUTRA BATIK COLLECTION. Hak Cipta Dilindungi.</p>
+          <div className="flex gap-6">
+            <Link href="/privasi" className="transition hover:text-[#F7F2E7]">Kebijakan Privasi</Link>
+            <Link href="/syarat" className="transition hover:text-[#F7F2E7]">Syarat & Ketentuan</Link>
           </div>
         </div>
       </div>
