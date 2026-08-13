@@ -1,7 +1,16 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+
+const connectionString = process.env.DATABASE_URL;
+
+// Membuat pool koneksi menggunakan 'pg'
+const pool = new Pool({ connectionString });
+// Memasang driver adapter pg ke Prisma
+const adapter = new PrismaPg(pool);
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({ adapter });
 };
 
 // Menyimpan instance Prisma di object globalThis agar tidak terduplikasi 
