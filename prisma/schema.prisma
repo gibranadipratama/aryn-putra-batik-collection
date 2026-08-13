@@ -12,56 +12,33 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
+  email         String    @unique
   password      String?
   role          Role      @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // Relasi
   orders        Order[]
-  accounts      Account[]
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
+  cart          Cart?
 }
 
 enum Role {
-  USER      // Pelanggan eceran biasa
-  RESELLER  // Pelanggan dengan akses harga grosir
-  ADMIN     // Pemilik toko/karyawan
+  USER
+  ADMIN
 }
 
 // ----------------------------------------------------------------------------
-// PRODUK & KATALOG
+// KATALOG: KATEGORI & PRODUK
 // ----------------------------------------------------------------------------
 model Category {
   id          String    @id @default(cuid())
-  name        String    @unique // cth: Batik Tulis, Batik Cap
-  slug        String    @unique
+  name        String    @unique // cth: Pria, Wanita, Couple, Lain-lain
+  slug        String    @unique // cth: pria, wanita, couple, lain-lain
   description String?
+  image       String?   // Gambar latar untuk kategori di beranda
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // Relasi
   products    Product[]
 }
 
@@ -70,66 +47,97 @@ model Product {
   name        String
   slug        String    @unique
   description String?   @db.Text
-  sku         String    @unique // Stock Keeping Unit
-  stock       Int       @default(0)
+  price       Float     // Harga produk
+  discount    Int?      @default(0)
   images      String[]  // Array URL gambar
-  
-  // Harga dipisah antara ecer dan grosir
-  retailPrice Float     // Harga eceran
-  grosirPrice Float     // Harga khusus reseller
-  
-  // Ketentuan Grosir
-  minOrderGrosir Int    @default(1) // Minimal beli untuk harga grosir (jika bukan reseller)
-  
-  isAvailable Boolean   @default(true)
+  isNew       Boolean   @default(true)  // Untuk badge "Baru" di beranda
+  isFeatured  Boolean   @default(false) // Untuk koleksi pilihan
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   // Relasi
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id])
+  variants    ProductVariant[]
+}
+
+// ----------------------------------------------------------------------------
+// VARIAN PRODUK (UKURAN & STOK)
+// ----------------------------------------------------------------------------
+model ProductVariant {
+  id          String    @id @default(cuid())
+  size        String    // cth: S, M, L, XL, All Size
+  stock       Int       @default(0)
+
+  // Relasi
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems   CartItem[]
   orderItems  OrderItem[]
+}
+
+// ----------------------------------------------------------------------------
+// KERANJANG BELANJA (CART)
+// ----------------------------------------------------------------------------
+model Cart {
+  id          String     @id @default(cuid())
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       CartItem[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model CartItem {
+  id          String         @id @default(cuid())
+  quantity    Int            @default(1)
+  
+  // Relasi
+  cartId      String
+  cart        Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId   String
+  variant     ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId]) // Cegah duplikasi varian yang sama
 }
 
 // ----------------------------------------------------------------------------
 // PESANAN & TRANSAKSI
 // ----------------------------------------------------------------------------
 model Order {
-  id          String      @id @default(cuid())
-  orderNumber String      @unique
-  totalAmount Float
-  status      OrderStatus @default(PENDING)
-  isResellerOrder Boolean @default(false) // Penanda apakah ini transaksi grosir
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique 
+  totalAmount     Float
+  status          OrderStatus @default(PENDING)
   
   // Alamat Pengiriman
-  shippingAddress String  @db.Text
-  city            String
-  postalCode      String
+  shippingAddress String      @db.Text
+  customerName    String
+  customerPhone   String
   
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   // Relasi
-  userId      String
-  user        User        @relation(fields: [userId], references: [id])
-  orderItems  OrderItem[]
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
-  quantity  Int
-  price     Float    // Harga pasti saat checkout (ecer/grosir) direkam di sini
+  id          String         @id @default(cuid())
+  quantity    Int
+  price       Float          // Mengunci harga saat checkout
   
   // Relasi
-  orderId   String
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  orderId     String
+  order       Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId   String         // Mengarah ke baju dengan ukuran spesifik
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
 }
 
 enum OrderStatus {
   PENDING
-  PAID
   PROCESSING
   SHIPPED
   DELIVERED
