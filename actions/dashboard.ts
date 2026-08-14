@@ -5,6 +5,7 @@ import { OrderStatus } from "@prisma/client";
 
 export async function getDashboardStats() {
   try {
+    // 1. Gunakan enum status yang tersedia di Prisma
     const completedOrders = await prisma.order.findMany({
       where: {
         status: OrderStatus.DELIVERED,
