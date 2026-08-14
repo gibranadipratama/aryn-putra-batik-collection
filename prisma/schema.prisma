@@ -13,8 +13,10 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
-  password      String?
+  password      String    // Wajib diisi (sudah diubah dari String?)
   role          Role      @default(USER)
+  phone         String?   // Tambahan untuk nomor HP pelanggan
+  address       String?   @db.Text // Tambahan untuk alamat pengiriman
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
