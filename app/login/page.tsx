@@ -102,6 +102,13 @@ export default function UserLoginPage() {
           <p className="text-[10px] text-[#0B1F33]/40 uppercase tracking-widest pt-2">
             <Link href="/admin/login" className="hover:underline">Masuk sebagai Admin?</Link>
           </p>
+          
+          {/* NAVIGASI KEMBALI KE BERANDA */}
+          <div className="pt-3 mt-3 border-t border-[#0B1F33]/5">
+            <Link href="/" className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#0B1F33]/50 hover:text-[#A88A3D] transition-colors">
+              &larr; Kembali ke Beranda
+            </Link>
+          </div>
         </div>
 
       </div>

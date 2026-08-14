@@ -99,6 +99,13 @@ export default function RegisterPage() {
               Masuk di sini
             </Link>
           </p>
+          
+          {/* NAVIGASI KEMBALI KE BERANDA */}
+          <div className="pt-3 mt-3 border-t border-[#0B1F33]/5">
+            <Link href="/" className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#0B1F33]/50 hover:text-[#A88A3D] transition-colors">
+              &larr; Kembali ke Beranda
+            </Link>
+          </div>
         </div>
 
       </div>
