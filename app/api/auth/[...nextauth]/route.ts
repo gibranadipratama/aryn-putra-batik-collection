@@ -45,19 +45,21 @@ const handler = NextAuth({
   callbacks: {
     // Memasukkan role ke dalam token dan session agar bisa dibaca di seluruh aplikasi
     async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as any).role;
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).role = token.role;
-        (session.user as any).id = token.id;
-      }
-      return session;
-    }
+  if (user) {
+    token.role = (user as any).role;
+    token.id = user.id;
+    token.image = (user as any).image; // <-- Masukkan image ke token
+  }
+  return token;
+},
+async session({ session, token }) {
+  if (session.user) {
+    (session.user as any).role = token.role;
+    (session.user as any).id = token.id;
+    session.user.image = token.image as string; // <-- Masukkan image ke session
+  }
+  return session;
+}
   },
   pages: {
     signIn: "/login", 

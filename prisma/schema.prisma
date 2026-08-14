@@ -17,6 +17,11 @@ model User {
   role          Role      @default(USER)
   phone         String?   // Tambahan untuk nomor HP pelanggan
   address       String?   @db.Text // Tambahan untuk alamat pengiriman
+  image             String?
+
+  lastProfileUpdate DateTime? 
+  updateCountToday  Int       @default(0)
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

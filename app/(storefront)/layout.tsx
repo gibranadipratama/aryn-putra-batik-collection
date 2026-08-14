@@ -1,6 +1,6 @@
-import Footer from '@/components/storefront/Footer';
-import Navbar from '@/components/storefront/Navbar';
-import Link from 'next/link';
+import Navbar from "@/components/storefront/Navbar";
+import Footer from "@/components/storefront/Footer"; 
+import Providers from "@/components/Providers"; 
 
 export default function StorefrontLayout({
   children,
@@ -8,11 +8,14 @@ export default function StorefrontLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      {/* Konten Halaman */}
-      <div className="grow">{children}</div>
-      <Footer />
-    </div>
+    // 2. Bungkus seluruh isi return dengan <Providers>
+    <Providers>
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        {/* Konten Halaman */}
+        <div className="grow">{children}</div>
+        <Footer />
+      </div>
+    </Providers>
   );
 }
