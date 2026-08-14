@@ -1,0 +1,110 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
+
+export default function UserLoginPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const res = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false, 
+      });
+
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Berhasil masuk, Selamat Datang!");
+        router.push("/"); // User biasa diarahkan ke beranda publik
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Terjadi kesalahan sistem.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#F4F0E7] p-5">
+      {/* Background Glow */}
+      <div className="absolute -right-20 top-10 h-80 w-80 animate-pulse rounded-full bg-[#A88A3D]/20 blur-3xl"></div>
+      <div className="absolute -left-20 bottom-0 h-72 w-72 animate-pulse rounded-full bg-[#0B1F33]/10 blur-3xl"></div>
+
+      <div className="relative z-10 w-full max-w-md transform rounded-3xl border border-white/60 bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
+        
+        {/* HEADER TANPA ICON - DIGANTI TEKS SAPAAN */}
+        <div className="mb-8 text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#A88A3D] mb-2">
+            Aryn Putra Batik Collection
+          </p>
+          <h1 className="text-3xl font-black uppercase tracking-wider text-[#0B1F33]">
+            Selamat Datang
+          </h1>
+          <p className="mt-1 text-xs text-[#0B1F33]/60">
+            Masuk untuk melanjutkan belanja koleksi batik terbaik.
+          </p>
+        </div>
+
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="group relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#0B1F33]/40">
+              <Mail className="h-4 w-4" />
+            </div>
+            <input 
+              required type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} 
+              className="w-full rounded-xl border-2 border-transparent bg-[#0B1F33]/5 py-3.5 pl-11 pr-4 text-sm text-[#0B1F33] outline-none transition-all focus:border-[#A88A3D]/50 focus:bg-white focus:ring-4 focus:ring-[#A88A3D]/10" 
+              placeholder="Alamat Email"
+            />
+          </div>
+
+          <div className="group relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#0B1F33]/40">
+              <Lock className="h-4 w-4" />
+            </div>
+            <input 
+              required type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} 
+              className="w-full rounded-xl border-2 border-transparent bg-[#0B1F33]/5 py-3.5 pl-11 pr-4 text-sm text-[#0B1F33] outline-none transition-all focus:border-[#A88A3D]/50 focus:bg-white focus:ring-4 focus:ring-[#A88A3D]/10" 
+              placeholder="Kata Sandi"
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1F33] py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#E8E0D3] shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#A88A3D] hover:text-[#0B1F33] disabled:opacity-50"
+          >
+            {isLoading ? "Mengecek..." : "Masuk Sekarang"} 
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </button>
+        </form>
+
+        <div className="mt-8 text-center space-y-3 border-t border-[#0B1F33]/10 pt-6">
+          <p className="text-xs font-bold text-[#0B1F33]/60">
+            Belum punya akun?{" "}
+            <Link href="/register" className="text-[#0B1F33] hover:text-[#A88A3D] underline underline-offset-4">
+              Daftar di sini
+            </Link>
+          </p>
+          <p className="text-[10px] text-[#0B1F33]/40 uppercase tracking-widest pt-2">
+            <Link href="/admin/login" className="hover:underline">Masuk sebagai Admin?</Link>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
