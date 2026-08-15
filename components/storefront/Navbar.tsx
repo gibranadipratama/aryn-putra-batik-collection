@@ -9,6 +9,7 @@ import {
   User,
   LogOut,
   Settings,
+  Package,
   ChevronDown,
   Menu,
   X,
@@ -27,19 +28,18 @@ export default function Navbar() {
 
   // Daftar Menu Navigasi
   const navLinks = [
-  { name: "Beranda", href: "/" },
-  { name: "Katalog", href: "/produk" },
-  { name: "Pria", href: "/kategori/pria" },
-  { name: "Wanita", href: "/kategori/wanita" },
-  { name: "Couple", href: "/kategori/couple" },
-  { name: "Lain-lain", href: "/kategori/lain-lain" },
-];
+    { name: "Beranda", href: "/" },
+    { name: "Katalog", href: "/produk" },
+    { name: "Pria", href: "/kategori/pria" },
+    { name: "Wanita", href: "/kategori/wanita" },
+    { name: "Couple", href: "/kategori/couple" },
+    { name: "Lain-lain", href: "/kategori/lain-lain" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#F7F2E7] text-[#102A43]">
       <div className="mx-auto max-w-375 px-5 md:px-10">
         <div className="flex min-h-19.5 items-center justify-between">
-
           {/* KIRI: LOGO & MOBILE MENU */}
           <div className="flex items-center gap-4">
             <button
@@ -68,33 +68,32 @@ export default function Navbar() {
           {/* TENGAH: NAVIGASI */}
           <nav className="hidden items-center gap-8 lg:flex">
             {navLinks.map((link) => {
-  const isActive = pathname === link.href;
+              const isActive = pathname === link.href;
 
-  return (
-    <Link
-      key={link.name}
-      href={link.href}
-      className={`relative py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors ${
-        isActive
-          ? "text-[#C9A227]"
-          : "text-[#102A43] hover:text-[#C9A227]"
-      }`}
-    >
-      {link.name}
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`relative py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors ${
+                    isActive
+                      ? "text-[#C9A227]"
+                      : "text-[#102A43] hover:text-[#C9A227]"
+                  }`}
+                >
+                  {link.name}
 
-      <span
-        className={`absolute bottom-0 left-0 h-px bg-[#C9A227] transition-all duration-300 ${
-          isActive ? "w-full" : "w-0"
-        }`}
-      />
-    </Link>
-  );
-})}
+                  <span
+                    className={`absolute bottom-0 left-0 h-px bg-[#C9A227] transition-all duration-300 ${
+                      isActive ? "w-full" : "w-0"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* KANAN: CART & PROFILE */}
           <div className="flex items-center gap-1 md:gap-2">
-
             {/* CART */}
             {isAuthenticated ? (
               <Link
@@ -157,7 +156,6 @@ export default function Navbar() {
                     />
 
                     <div className="absolute right-0 top-full z-50 mt-3 w-56 overflow-hidden rounded-2xl border border-[#102A43]/10 bg-[#F7F2E7] shadow-[0_18px_50px_rgba(16,42,67,0.14)]">
-                      
                       {/* USER INFO */}
                       <div className="border-b border-[#102A43]/10 px-4 py-4">
                         <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-[#C9A227]">
@@ -167,6 +165,18 @@ export default function Navbar() {
                         <p className="mt-1 truncate text-[11px] font-black uppercase tracking-[0.08em] text-[#102A43]">
                           {session?.user?.name || "Pelanggan"}
                         </p>
+                      </div>
+
+                      {/* ORDERS */}
+                      <div className="p-2">
+                        <Link
+                          href="/pesanan"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 rounded-xl px-3 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-[#102A43] transition hover:bg-[#102A43]/5 hover:text-[#C9A227]"
+                        >
+                          <Package className="h-4 w-4 text-[#C9A227]" />
+                          Pesanan Saya
+                        </Link>
                       </div>
 
                       {/* ACCOUNT */}
@@ -239,6 +249,17 @@ export default function Navbar() {
                 </Link>
               );
             })}
+
+            {/* ORDER */}
+            {isAuthenticated && (
+              <Link
+                href="/pesanan"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-2 border-b border-[#102A43]/10 py-4 text-sm font-black uppercase tracking-[0.15em] text-[#102A43] hover:text-[#C9A227]"
+              >
+                <Package className="h-4 w-4" /> Pesanan Saya
+              </Link>
+            )}
 
             {/* LOGIN MOBILE */}
             {!isAuthenticated && (
