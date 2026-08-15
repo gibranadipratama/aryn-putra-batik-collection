@@ -18,11 +18,10 @@ export default function ProductCard({ product }: { product: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Mengambil varian pertama secara default untuk aksi cepat dari card
   const defaultVariant = product.variants?.[0];
 
   const handleQuickAction = (e: React.MouseEvent, isBuyNow: boolean) => {
-    e.preventDefault(); // Mencegah pindah halaman saat tombol diklik
+    e.preventDefault(); 
 
     if (status === "unauthenticated") {
       toast.error("Silakan masuk terlebih dahulu untuk berbelanja.");
@@ -55,10 +54,10 @@ export default function ProductCard({ product }: { product: any }) {
     : product.price;
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#0B1F33]/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div className="group flex flex-col overflow-hidden rounded-lg border-2 border-(--color-border) bg-(--color-surface) shadow-[4px_4px_0_rgba(139,94,60,0.2)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(139,94,60,0.35)]">
       
       {/* Gambar Produk */}
-      <Link href={`/produk/${product.slug}`} className="relative aspect-square w-full overflow-hidden bg-[#EDE6DA]">
+      <Link href={`/produk/${product.slug}`} className="relative aspect-square w-full overflow-hidden bg-(--color-bg) border-b-2 border-(--color-border)">
         <Image 
           src={product.images[0] || "/batik-default.jpg"} 
           alt={product.name} 
@@ -66,7 +65,7 @@ export default function ProductCard({ product }: { product: any }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105" 
         />
         {product.discount > 0 && (
-          <span className="absolute left-3 top-3 rounded-lg bg-red-600 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-md">
+          <span className="absolute left-3 top-3 rounded-md border border-(--color-danger) bg-(--color-danger) px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
             Diskon {product.discount}%
           </span>
         )}
@@ -75,30 +74,30 @@ export default function ProductCard({ product }: { product: any }) {
       {/* Konten & Informasi */}
       <div className="flex flex-1 flex-col justify-between p-4">
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#A88A3D]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2)">
             {product.category?.name || "Koleksi Batik"}
           </p>
           <Link href={`/produk/${product.slug}`}>
-            <h3 className="mt-1 font-black uppercase tracking-wide text-[#0B1F33] text-sm line-clamp-1 hover:text-[#A88A3D] transition-colors">
+            <h3 className="mt-1 line-clamp-1 text-sm font-bold uppercase tracking-wide text-(--color-primary-dark) transition-colors hover:text-(--color-primary)">
               {product.name}
             </h3>
           </Link>
 
           {/* Harga */}
           <div className="mt-2 flex items-center gap-2">
-            <span className="font-black text-sm text-[#0B1F33]">{formatRupiah(finalPrice)}</span>
+            <span className="text-sm font-bold text-(--color-text-primary)">{formatRupiah(finalPrice)}</span>
             {product.discount > 0 && (
-              <span className="text-[10px] line-through text-[#0B1F33]/40">{formatRupiah(product.price)}</span>
+              <span className="text-xs text-(--color-text-secondary) line-through opacity-80">{formatRupiah(product.price)}</span>
             )}
           </div>
         </div>
 
-        {/* Tombol Aksi Cepat (Keranjang & Beli) */}
-        <div className="mt-4 grid grid-cols-2 gap-2 pt-3 border-t border-[#0B1F33]/5">
+        {/* Tombol Aksi Cepat */}
+        <div className="mt-4 grid grid-cols-2 gap-2 pt-3">
           <button 
             onClick={(e) => handleQuickAction(e, false)}
             disabled={isPending || !defaultVariant || defaultVariant.stock === 0}
-            className="flex items-center justify-center gap-1.5 rounded-xl border border-[#0B1F33] bg-transparent py-2 text-[10px] font-black uppercase tracking-wider text-[#0B1F33] transition hover:bg-[#0B1F33] hover:text-[#E8E0D3] disabled:opacity-40"
+            className="flex items-center justify-center gap-1.5 rounded-md border-2 border-(--color-primary) bg-transparent py-2 text-[10px] font-bold uppercase tracking-wider text-(--color-primary) transition hover:bg-(--color-primary) hover:text-(--color-surface) disabled:opacity-40"
             title="Masukkan Keranjang"
           >
             <ShoppingBag className="h-3.5 w-3.5" /> Keranjang
@@ -107,13 +106,12 @@ export default function ProductCard({ product }: { product: any }) {
           <button 
             onClick={(e) => handleQuickAction(e, true)}
             disabled={isPending || !defaultVariant || defaultVariant.stock === 0}
-            className="flex items-center justify-center gap-1.5 rounded-xl bg-[#0B1F33] py-2 text-[10px] font-black uppercase tracking-wider text-[#E8E0D3] transition hover:bg-[#A88A3D] hover:text-[#0B1F33] disabled:opacity-40"
+            className="flex items-center justify-center gap-1.5 rounded-md border-2 border-(--color-primary) bg-(--color-primary) py-2 text-[10px] font-bold uppercase tracking-wider text-(--color-surface) shadow-[2px_2px_0_rgba(139,94,60,0.3)] transition hover:-translate-y-0.5 hover:bg-(--color-primary-dark) hover:border-(--color-primary-dark) disabled:opacity-40"
             title="Beli Sekarang"
           >
             Beli <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
-
       </div>
     </div>
   );

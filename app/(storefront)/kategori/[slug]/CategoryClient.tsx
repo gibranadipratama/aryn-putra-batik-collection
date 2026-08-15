@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, ArrowRight } from "lucide-react";
+import { ShoppingBag, Tag } from "lucide-react";
 
 const formatRupiah = (angka: number) => {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
@@ -17,94 +17,120 @@ export default function CategoryClient({ products, categorySlug }: { products: a
   const title = formatTitle(categorySlug);
 
   return (
-    <div className="min-h-screen bg-[#F4F0E7]">
-      {/* HEADER KATEGORI */}
-      <div className="bg-[#0B1F33] py-16 text-center text-[#E8E0D3]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#A88A3D] mb-4">
-          Aryn Putra Collection
-        </p>
-        <h1 className="text-4xl md:text-5xl font-black uppercase tracking-widest">
-          Koleksi {title}
-        </h1>
-        <div className="mx-auto mt-6 h-1 w-24 bg-[#A88A3D]"></div>
+    <div className="min-h-screen bg-(--color-bg) font-sans">
+      
+      {/* HEADER KATEGORI - Sangat Kompak */}
+      <div className="border-b-2 border-(--color-border) bg-(--color-surface) py-6 md:py-8">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 px-5 md:flex-row md:items-center md:px-8">
+          <div>
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="h-0.5 w-6 bg-(--color-accent)"></span>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
+                Arsip Koleksi
+              </p>
+            </div>
+            <h1 className="text-2xl font-black uppercase tracking-wider text-(--color-primary-dark) md:text-3xl">
+              {title}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3 border-l-2 border-(--color-border) pl-4">
+            <div>
+              <p className="text-[8px] font-bold uppercase tracking-widest text-(--color-text-secondary)">Total Item</p>
+              <p className="text-xl font-black text-(--color-accent-2)">{products.length}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* GRID PRODUK */}
-      <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 lg:py-20">
-        <div className="mb-8 flex items-center justify-between border-b border-[#0B1F33]/10 pb-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#0B1F33]/60">
-            Menampilkan <span className="text-[#0B1F33]">{products.length}</span> Produk
-          </p>
-        </div>
-
+      <div className="mx-auto max-w-7xl px-5 py-8 md:px-8">
         {products.length === 0 ? (
-          // TAMPILAN JIKA KATEGORI KOSONG
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShoppingBag className="h-12 w-12 text-[#0B1F33]/20 mb-4" />
-            <h3 className="text-lg font-black uppercase tracking-wider text-[#0B1F33]">Koleksi Kosong</h3>
-            <p className="mt-2 text-sm text-[#0B1F33]/60">Belum ada produk untuk kategori {title} saat ini.</p>
-            <Link href="/" className="mt-6 border border-[#0B1F33] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#0B1F33] transition hover:bg-[#0B1F33] hover:text-[#E8E0D3]">
-              Kembali ke Beranda
+          // EMPTY STATE
+          <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-sm border-2 border-dashed border-(--color-border) bg-(--color-surface) py-16 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-(--color-border) bg-(--color-bg)">
+              <ShoppingBag className="h-5 w-5 text-(--color-text-secondary)" />
+            </div>
+            <h3 className="text-base font-black uppercase tracking-wider text-(--color-primary-dark)">Arsip Kosong</h3>
+            <p className="mt-1.5 text-xs text-(--color-text-secondary)">Koleksi untuk kategori ini sedang tidak tersedia atau habis terjual.</p>
+            <Link 
+              href="/" 
+              className="mt-5 rounded-md border-2 border-(--color-primary) bg-(--color-primary) px-5 py-2 text-[9px] font-bold uppercase tracking-widest text-(--color-surface) shadow-[2px_2px_0_rgba(139,94,60,0.3)] transition hover:-translate-y-0.5 hover:bg-(--color-primary-dark)"
+            >
+              Lihat Koleksi Lainnya
             </Link>
           </div>
         ) : (
-          // TAMPILAN GRID PRODUK
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">
-            {products.map((product) => (
-              <Link key={product.id} href={`/produk/${product.slug}`} className="group relative flex flex-col bg-white shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                
-                {/* AREA GAMBAR */}
-                <div className="relative aspect-3/4 w-full overflow-hidden bg-[#EDE6DA]">
-                  <Image 
-                    src={product.images[0] || "/batik-sementara.jpg"} 
-                    alt={product.name} 
-                    fill 
-                    className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                  />
+          // TAMPILAN KARTU UKURAN KOMPAK (Grid 2 s.d 4 Kolom)
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
+            {products.map((product, index) => {
+              const rotationClass = index % 2 === 0 ? "hover:-rotate-1" : "hover:rotate-1";
+
+              return (
+                <Link 
+                  key={product.id} 
+                  href={`/produk/${product.slug}`} 
+                  className={`group relative flex flex-col rounded-sm border-2 border-(--color-border) bg-(--color-surface) p-3 shadow-[4px_4px_0_rgba(201,168,118,0.4)] transition-all duration-300 hover:-translate-y-1 ${rotationClass}`}
+                >
                   
-                  {/* LABEL DISKON */}
+                  {/* LABEL DISKON - Stiker Retro Kecil */}
                   {product.discount > 0 && (
-                    <span className="absolute left-3 top-3 bg-red-600 px-3 py-1.5 text-[10px] font-black text-white shadow-md">
-                      -{product.discount}%
-                    </span>
+                    <div className="absolute -right-2 -top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-(--color-border) bg-(--color-accent) shadow-[2px_2px_0_rgba(58,40,27,0.4)]">
+                      <span className="text-center text-[8px] font-black leading-tight text-(--color-text-primary)">
+                        {product.discount}%<br/>OFF
+                      </span>
+                    </div>
                   )}
 
-                  {/* OVERLAY BUTTON (Muncul saat di-hover) */}
-                  <div className="absolute inset-0 bg-[#0B1F33]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-end p-4">
-                    <div className="w-full bg-[#0B1F33] py-3 text-center text-[10px] font-bold uppercase tracking-widest text-[#E8E0D3] shadow-lg flex items-center justify-center gap-2 hover:bg-[#A88A3D] transition-colors">
-                      Lihat Detail <ArrowRight className="h-3 w-3" />
-                    </div>
+                  {/* AREA GAMBAR - Lebih proporsional/kecil (Persegi) */}
+                  <div className="relative aspect-square w-full overflow-hidden border border-(--color-border) bg-(--color-bg)">
+                    <Image 
+                      src={product.images[0] || "/batik-sementara.jpg"} 
+                      alt={product.name} 
+                      fill 
+                      className="object-cover grayscale-15 sepia-5 transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 group-hover:sepia-0" 
+                    />
                   </div>
-                </div>
-                
-                {/* INFO PRODUK */}
-                <div className="flex flex-1 flex-col p-4 text-center">
-                  <h3 className="text-sm font-black uppercase tracking-wide text-[#0B1F33] line-clamp-1 mb-2">
-                    {product.name}
-                  </h3>
                   
-                  <div className="flex-1"></div>
-                  
-                  {/* AREA HARGA */}
-                  <div className="mt-auto pt-3 border-t border-[#0B1F33]/10">
-                    {product.discount > 0 ? (
-                      <div className="flex flex-col items-center">
-                        <p className="text-[10px] font-bold text-[#0B1F33]/40 line-through">
+                  {/* INFO PRODUK */}
+                  <div className="flex flex-col items-center pt-3 text-center">
+                    <p className="text-[8px] font-bold uppercase tracking-widest text-(--color-accent-2)">
+                      Ref: {product.slug.substring(0, 6)}
+                    </p>
+                    <h3 className="mt-1 line-clamp-2 text-xs font-bold uppercase tracking-wide text-(--color-text-primary) group-hover:text-(--color-primary)">
+                      {product.name}
+                    </h3>
+                    
+                    <div className="my-2 w-8 border-b border-dotted border-(--color-border)"></div>
+                    
+                    {/* AREA HARGA */}
+                    <div className="flex flex-col items-center">
+                      {product.discount > 0 ? (
+                        <>
+                          <p className="text-[9px] font-bold text-(--color-text-secondary) line-through">
+                            {formatRupiah(product.price)}
+                          </p>
+                          <p className="text-xs font-black text-(--color-danger)">
+                            {formatRupiah(product.price - (product.price * product.discount) / 100)}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-xs font-black text-(--color-primary-dark)">
                           {formatRupiah(product.price)}
                         </p>
-                        <p className="text-sm lg:text-base font-black text-red-600">
-                          {formatRupiah(product.price - (product.price * product.discount) / 100)}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-sm lg:text-base font-black text-[#0B1F33]">
-                        {formatRupiah(product.price)}
-                      </p>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+
+                  {/* AKSEN BAWAH */}
+                  <div className="mt-3 border-t border-(--color-bg) pt-2 text-center">
+                    <div className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-widest text-(--color-text-secondary) group-hover:text-(--color-primary-dark)">
+                      <Tag className="h-2.5 w-2.5" /> Detail
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

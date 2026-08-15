@@ -1,327 +1,203 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getLatestProducts } from "@/actions/product"; // Sesuaikan path import actions Anda
-
-// Format angka ke mata uang Rupiah
-const formatRupiah = (angka: number) => {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  }).format(angka);
-};
+import { getLatestProducts } from "@/actions/product";
+import ProductCard from "@/components/ui/ProductCard";
 
 export default async function HomePage() {
-  // Ambil data produk terbaru dari database Supabase
   const products = await getLatestProducts();
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#F4F0E7] text-[#191817]">
+    <main className="min-h-screen bg-(--color-bg) text-(--color-text-primary) font-sans">
       {/* =====================================================
-          HERO
+          1. HERO SECTION (STRONG BROWN & INVERTED LAYOUT)
       ====================================================== */}
-      <section className="mx-auto grid max-w-375 grid-cols-1 gap-10 px-5 py-8 md:grid-cols-12 md:px-10 md:py-14">
-        <div className="flex flex-col justify-between md:col-span-7">
-          <div>
-            <div className="mb-7 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[#A64B2A]">
-              <span className="h-px w-10 bg-[#A64B2A]" />
-              Koleksi Batik Nusantara
+      <section className="bg-(--color-primary-dark) text-(--color-surface) border-b-4 border-(--color-border)">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 py-12 md:grid-cols-2 md:items-center md:px-8 md:py-20">
+          
+          {/* GAMBAR HERO */}
+          <div className="relative w-full aspect-4/3 md:aspect-4/5 lg:aspect-square order-2 md:order-1">
+            <div className="absolute inset-0 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[6px_6px_0_rgba(201,168,118,0.5)]">
+              <Image
+                src="/batik-sementara.jpg"
+                alt="Model memakai koleksi batik terbaru"
+                fill
+                priority
+                className="object-cover transition-transform duration-700 hover:scale-105"
+              />
             </div>
-            <h1 className="text-[18vw] font-black uppercase leading-[0.78] tracking-[-0.09em] md:text-[9.5vw]">
-              Batik
-              <br />
-              <span className="ml-[7vw] text-[#A64B2A] md:ml-[4vw]">Untuk</span>
-              <br />
-              <span className="text-transparent [-webkit-text-stroke:1px_#191817] md:[-webkit-text-stroke:2px_#191817]">
-                Sehari-hari.
-              </span>
-            </h1>
+            {/* Badge Aksen */}
+            <div className="absolute -bottom-6 -right-6 flex h-28 w-28 flex-col items-center justify-center rounded-full border-2 border-(--color-border) bg-(--color-accent) p-4 text-center text-[10px] font-bold uppercase tracking-widest text-(--color-text-primary) shadow-[4px_4px_0_rgba(58,40,27,0.5)] md:h-32 md:w-32">
+              <span>Koleksi</span>
+              <span className="text-(--color-surface)">Terbaru</span>
+            </div>
           </div>
 
-          <div className="mt-12 max-w-lg md:ml-[14%] md:mt-16">
-            <p className="text-base leading-7 text-[#191817]/65 md:text-lg">
-              Pilihan batik pria, wanita, dan couple dengan motif pilihan untuk
-              berbagai kebutuhan.
+          {/* TEKS HERO */}
+          <div className="flex flex-col justify-center order-1 md:order-2 md:pl-8">
+            <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-(--color-accent)">
+              <span className="h-0.5 w-8 bg-(--color-accent)" />
+              Aryn Putra Batik
+            </div>
+            
+            <h1 className="text-4xl font-bold leading-tight md:text-5xl lg:text-6xl text-(--color-surface)">
+              Koleksi Batik Harian. <br />
+              <span className="text-(--color-primary-light)">Nyaman & Rapi.</span>
+            </h1>
+            
+            <p className="mt-6 max-w-md text-base leading-relaxed text-(--color-bg) opacity-90">
+              Pilihan busana batik pria, wanita, dan couple dengan material katun halus. Dirancang untuk gaya kasual maupun formal.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/produk"
-                className="rounded-full bg-[#191817] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#F4F0E7] transition hover:bg-[#A64B2A]"
+                className="rounded-md bg-(--color-accent) px-8 py-3.5 text-sm font-bold tracking-wide text-(--color-text-primary) shadow-[3px_3px_0_rgba(201,168,118,0.6)] transition-all hover:-translate-y-0.5 hover:bg-(--color-accent-2) hover:text-(--color-surface)"
               >
                 Belanja Sekarang
               </Link>
               <Link
                 href="/kategori/pria"
-                className="rounded-full border border-[#191817]/25 px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.18em] transition hover:bg-[#191817] hover:text-white"
+                className="rounded-md border-2 border-(--color-border) bg-transparent px-8 py-3.5 text-sm font-bold tracking-wide text-(--color-surface) transition-all hover:-translate-y-0.5 hover:bg-(--color-surface) hover:text-(--color-primary-dark)"
               >
                 Lihat Koleksi
               </Link>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* RIGHT IMAGE */}
-        <div className="relative min-h-130 md:col-span-5 md:min-h-175">
-          <div className="absolute right-0 top-0 h-[90%] w-[88%] overflow-hidden rounded-[150px_0_150px_0] bg-[#D9D0C0]">
-            <Image
-              src="/batik-sementara.jpg"
-              alt="Koleksi Batik"
-              fill
-              priority
-              className="object-cover object-center transition duration-700 hover:scale-105"
-            />
-          </div>
-          <div className="absolute bottom-0 left-0 flex h-36 w-36 rotate-[-8deg] items-center justify-center rounded-full bg-[#A64B2A] text-center text-[10px] font-black uppercase tracking-[0.15em] text-white md:h-40 md:w-40">
-            Koleksi
-            <br />
-            Batik
-            <br />
-            Terbaru
-          </div>
+      {/* =====================================================
+          2. QUICK CATEGORY
+      ====================================================== */}
+      <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[
+            { title: "Semua Produk", desc: "Lihat keseluruhan", link: "/produk" },
+            { title: "Pria", desc: "Kemeja & kasual", link: "/kategori/pria" },
+            { title: "Wanita", desc: "Tunik & blouse", link: "/kategori/wanita" },
+            { title: "Couple", desc: "Koleksi sarimbit", link: "/kategori/couple" },
+          ].map((cat, i) => (
+            <Link
+              key={i}
+              href={cat.link}
+              className="group flex flex-col rounded-lg border-2 border-(--color-border) bg-(--color-primary) p-5 text-(--color-surface) shadow-[4px_4px_0_rgba(139,94,60,0.3)] transition-all hover:-translate-y-1 hover:bg-(--color-primary-dark)"
+            >
+              <span className="text-[10px] font-bold text-(--color-primary-light)">0{i + 1}</span>
+              <h3 className="mt-2 text-lg font-semibold group-hover:text-(--color-accent)">{cat.title}</h3>
+              <p className="mt-1 text-xs opacity-80">{cat.desc}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* =====================================================
-          QUICK CATEGORY
+          3. PRODUK TERBARU
       ====================================================== */}
-      <section className="border-y border-[#191817]/10 bg-[#191817]">
-        <div className="mx-auto grid max-w-375 grid-cols-2 md:grid-cols-4">
-          <Link
-            href="/produk"
-            className="border-r border-white/10 px-5 py-8 text-white transition hover:bg-[#A64B2A] md:px-8"
-          >
-            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50">
-              01
-            </span>
-            <h3 className="mt-2 text-xl font-black uppercase">Semua Produk</h3>
-            <p className="mt-1 text-xs text-white/50">Lihat semua koleksi</p>
-          </Link>
-          <Link
-            href="/kategori/pria"
-            className="border-r border-white/10 px-5 py-8 text-white transition hover:bg-[#A64B2A] md:px-8"
-          >
-            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50">
-              02
-            </span>
-            <h3 className="mt-2 text-xl font-black uppercase">Pria</h3>
-            <p className="mt-1 text-xs text-white/50">Kemeja & pakaian pria</p>
-          </Link>
-          <Link
-            href="/kategori/wanita"
-            className="border-r border-white/10 px-5 py-8 text-white transition hover:bg-[#A64B2A] md:px-8"
-          >
-            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50">
-              03
-            </span>
-            <h3 className="mt-2 text-xl font-black uppercase">Wanita</h3>
-            <p className="mt-1 text-xs text-white/50">Tunik, dress & blouse</p>
-          </Link>
-          <Link
-            href="/kategori/couple"
-            className="px-5 py-8 text-white transition hover:bg-[#A64B2A] md:px-8"
-          >
-            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50">
-              04
-            </span>
-            <h3 className="mt-2 text-xl font-black uppercase">Couple</h3>
-            <p className="mt-1 text-xs text-white/50">Koleksi sarimbit</p>
-          </Link>
-        </div>
-      </section>
-
-      {/* =====================================================
-          KOLEKSI UNGGULAN
-      ====================================================== */}
-      <section className="mx-auto max-w-375 px-5 py-20 md:px-10 md:py-28">
-        <div className="mb-12 flex items-end justify-between">
-          <div>
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[#A64B2A]">
-              Koleksi Pilihan
-            </p>
-            <h2 className="text-5xl font-black uppercase leading-[0.85] tracking-[-0.07em] md:text-7xl">
-              Pilih
-              <br />
-              Gayamu<span className="text-[#A64B2A]">.</span>
-            </h2>
-          </div>
-          <Link
-            href="/produk"
-            className="hidden border-b border-[#191817] pb-1 text-[10px] font-black uppercase tracking-[0.2em] md:block"
-          >
-            Lihat Semua →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-12 md:grid-rows-[320px_320px]">
-          <Link
-            href="/kategori/pria"
-            className="group relative min-h-105 overflow-hidden md:col-span-7 md:row-span-2"
-          >
-            <Image
-              src="/batik-sementara.jpg"
-              alt="Koleksi Batik Pria"
-              fill
-              className="object-cover transition duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
-            <div className="absolute bottom-8 left-8 text-white md:bottom-10 md:left-10">
-              <span className="text-[9px] font-bold uppercase tracking-[0.25em]">
-                Koleksi 01
-              </span>
-              <h3 className="mt-2 text-5xl font-black uppercase tracking-tighter md:text-7xl">
-                Pria
-              </h3>
-              <p className="mt-2 text-sm text-white/70">
-                Kemeja batik untuk berbagai kesempatan
-              </p>
-              <span className="mt-5 inline-block text-[10px] font-black uppercase tracking-[0.2em]">
-                Belanja Sekarang →
-              </span>
-            </div>
-          </Link>
-
-          <Link
-            href="/kategori/wanita"
-            className="group relative min-h-75 overflow-hidden md:col-span-5"
-          >
-            <Image
-              src="/batik-sementara.jpg"
-              alt="Koleksi Batik Wanita"
-              fill
-              className="object-cover transition duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/30 transition group-hover:bg-black/10" />
-            <div className="absolute bottom-7 left-7 text-white">
-              <span className="text-[9px] font-bold uppercase tracking-[0.25em]">
-                Koleksi 02
-              </span>
-              <h3 className="mt-2 text-4xl font-black uppercase tracking-tighter">
-                Wanita
-              </h3>
-              <span className="mt-3 inline-block text-[10px] font-black uppercase tracking-[0.2em]">
-                Lihat Produk →
-              </span>
-            </div>
-          </Link>
-
-          <Link
-            href="/kategori/couple"
-            className="group relative flex min-h-75 items-end justify-between overflow-hidden bg-[#A64B2A] p-8 text-white transition hover:bg-[#8F3E22] md:col-span-5 md:p-10"
-          >
+      <section className="bg-(--color-surface) border-y-2 border-(--color-border)">
+        <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-20">
+          <div className="mb-10 flex items-end justify-between border-b-2 border-(--color-border) pb-4">
             <div>
-              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/60">
-                Koleksi 03
-              </span>
-              <h3 className="mt-2 text-4xl font-black uppercase tracking-tighter md:text-5xl">
-                Couple
-              </h3>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-white/70">
-                Pilihan batik untuk tampil serasi bersama pasangan.
-              </p>
-              <span className="mt-5 inline-block text-[10px] font-black uppercase tracking-[0.2em]">
-                Lihat Sarimbit →
-              </span>
-            </div>
-            <span className="text-4xl transition-transform duration-300 group-hover:translate-x-2">
-              ↗
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      {/* =====================================================
-          PRODUK TERBARU (DINAMIS DARI DATABASE)
-      ====================================================== */}
-      <section className="border-y border-[#191817]/10 bg-[#E9E2D5]">
-        <div className="mx-auto max-w-375 px-5 py-20 md:px-10 md:py-28">
-          <div className="mb-12 flex items-end justify-between">
-            <div>
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[#A64B2A]">
-                Produk Terbaru
-              </p>
-              <h2 className="text-4xl font-black uppercase tracking-[-0.06em] md:text-6xl">
-                Terbaru
-              </h2>
+              <h2 className="text-2xl font-bold md:text-3xl text-(--color-primary-dark)">Produk Terbaru</h2>
+              <p className="mt-2 text-sm text-(--color-text-secondary)">Koleksi yang baru saja hadir di toko kami.</p>
             </div>
             <Link
               href="/produk"
-              className="hidden text-[10px] font-black uppercase tracking-[0.2em] md:block"
+              className="hidden text-sm font-bold text-(--color-primary) hover:text-(--color-accent-2) hover:underline md:block"
             >
-              Lihat Semua →
+              Lihat Semua &rarr;
             </Link>
           </div>
 
           {products.length === 0 ? (
-            <div className="py-12 text-center text-sm text-[#191817]/6it0">
-              Belum ada produk yang ditambahkan. Silakan tambah produk melalui
-              halaman admin.
+            <div className="flex min-h-50 items-center justify-center rounded-lg border-2 border-dashed border-(--color-border) bg-(--color-bg)">
+              <p className="text-sm font-medium text-(--color-text-secondary)">Belum ada produk di sini.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/produk/${product.slug}`}
-                  className="group"
-                >
-                  <div className="relative aspect-4/5 overflow-hidden bg-[#D5CCBC]">
-                    <Image
-                      src={product.images[0] || "/batik-sementara.jpg"}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition duration-700 group-hover:scale-105"
-                    />
-                    {product.isNew && (
-                      <span className="absolute left-4 top-4 rounded-full bg-[#F4F0E7] px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em]">
-                        Baru
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-start justify-between gap-4 pt-5">
-                    <div>
-                      <h3 className="text-lg font-black uppercase tracking-[-0.04em] transition group-hover:text-[#A64B2A]">
-                        {product.name}
-                      </h3>
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#191817]/45">
-                        {product.category?.name || "Batik"}
-                      </p>
-                    </div>
-                    <p className="whitespace-nowrap text-sm font-black">
-                      {formatRupiah(product.price)}
-                    </p>
-                  </div>
-                </Link>
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
+          
+          <div className="mt-8 text-center md:hidden">
+            <Link href="/produk" className="inline-block rounded-md border-2 border-(--color-border) bg-(--color-primary) px-6 py-3 text-sm font-bold text-(--color-surface) shadow-[3px_3px_0_rgba(139,94,60,0.3)] transition hover:-translate-y-0.5 hover:bg-(--color-primary-dark)">
+              Lihat Semua Produk
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* =====================================================
-          PROMO / CTA
+          4. KOLEKSI PILIHAN
       ====================================================== */}
-      <section className="mx-auto max-w-375 px-5 py-20 md:px-10 md:py-28">
-        <div className="relative overflow-hidden bg-[#D5A15A] px-7 py-14 md:px-16 md:py-20">
-          <div className="absolute -right-10 -top-20 text-[200px] font-black leading-none text-black/5">
-            BATIK
-          </div>
-          <p className="relative text-[10px] font-bold uppercase tracking-[0.25em]">
-            Koleksi Nusantara
-          </p>
-          <h2 className="relative mt-4 max-w-3xl text-5xl font-black uppercase leading-[0.9] tracking-[-0.07em] md:text-7xl">
-            Temukan batik
-            <br />
-            favoritmu.
+      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold md:text-3xl text-(--color-primary-dark)">Kategori Pilihan</h2>
+          <p className="mt-2 text-sm text-(--color-text-secondary)">Gaya andalan untuk berbagai momen.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {/* Pria */}
+          <Link
+            href="/kategori/pria"
+            className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
+          >
+            <Image src="/batik-sementara.jpg" alt="Batik Pria" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-(--color-text-primary) opacity-40 transition-opacity group-hover:opacity-60" />
+            <div className="absolute bottom-6 left-6 right-6 border-t-2 border-(--color-accent) pt-4 text-(--color-surface)">
+              <h3 className="text-2xl font-bold">Pria</h3>
+              <p className="mt-2 text-sm opacity-90">Kemeja rapi untuk kerja dan acara.</p>
+            </div>
+          </Link>
+
+          {/* Wanita */}
+          <Link
+            href="/kategori/wanita"
+            className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
+          >
+            <Image src="/batik-sementara.jpg" alt="Batik Wanita" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-(--color-text-primary) opacity-40 transition-opacity group-hover:opacity-60" />
+            <div className="absolute bottom-6 left-6 right-6 border-t-2 border-(--color-accent) pt-4 text-(--color-surface)">
+              <h3 className="text-2xl font-bold">Wanita</h3>
+              <p className="mt-2 text-sm opacity-90">Tunik & dress menawan.</p>
+            </div>
+          </Link>
+
+          {/* Couple */}
+          <Link
+            href="/kategori/couple"
+            className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
+          >
+            <Image src="/batik-sementara.jpg" alt="Batik Couple" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-(--color-primary-dark) opacity-70 transition-opacity group-hover:opacity-80" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-(--color-surface) p-6">
+              <h3 className="text-3xl font-bold">Couple</h3>
+              <p className="mt-3 text-sm opacity-90">Tampil serasi bersama pasangan tercinta.</p>
+              <span className="mt-6 rounded-full border border-(--color-surface) px-4 py-2 text-xs uppercase tracking-wider transition-colors group-hover:bg-(--color-surface) group-hover:text-(--color-primary-dark)">
+                Lihat Sarimbit
+              </span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* =====================================================
+          5. PROMO CTA
+      ====================================================== */}
+      <section className="mx-auto max-w-7xl px-5 pb-16 md:px-8 md:pb-24">
+        <div className="relative flex flex-col items-center overflow-hidden rounded-xl border-2 border-(--color-border) bg-(--color-text-primary) px-6 py-16 text-center shadow-[6px_6px_0_rgba(201,168,118,0.5)] md:px-12 md:py-20">
+          <h2 className="text-3xl font-bold text-(--color-accent) md:text-5xl">
+            Mulai Gaya Batik Anda.
           </h2>
-          <p className="relative mt-6 max-w-lg text-sm leading-6 text-[#191817]/70">
-            Pilih dari berbagai koleksi batik pria, wanita, couple, dan produk
-            lainnya.
+          <p className="mt-4 max-w-lg text-sm text-(--color-surface) opacity-90 md:text-base">
+            Cek ketersediaan ukuran dan warna favorit Anda sebelum kehabisan.
           </p>
           <Link
             href="/produk"
-            className="relative mt-8 inline-flex rounded-full bg-[#191817] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-[#A64B2A]"
+            className="mt-8 rounded-md bg-(--color-accent) px-8 py-3.5 text-sm font-bold tracking-wide text-(--color-text-primary) shadow-[3px_3px_0_rgba(201,168,118,0.4)] transition hover:-translate-y-0.5 hover:bg-(--color-surface) hover:text-(--color-primary-dark)"
           >
-            Lihat Semua Produk
+            Lihat Katalog Lengkap
           </Link>
         </div>
       </section>

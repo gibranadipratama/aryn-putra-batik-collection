@@ -11,23 +11,23 @@ const formatTanggal = (date: string | Date) =>
   new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(new Date(date));
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  PENDING: { label: "Menunggu Pembayaran", className: "bg-yellow-100 text-yellow-700" },
-  PROCESSING: { label: "Diproses", className: "bg-blue-100 text-blue-700" },
-  SHIPPED: { label: "Dikirim", className: "bg-purple-100 text-purple-700" },
-  DELIVERED: { label: "Selesai", className: "bg-green-100 text-green-700" },
-  CANCELLED: { label: "Dibatalkan", className: "bg-red-100 text-red-700" },
+  PENDING: { label: "Menunggu Pembayaran", className: "border border-(--color-warning) bg-(--color-warning)/10 text-(--color-warning)" },
+  PROCESSING: { label: "Diproses", className: "border border-(--color-primary) bg-(--color-primary)/10 text-(--color-primary)" },
+  SHIPPED: { label: "Dikirim", className: "border border-(--color-accent) bg-(--color-accent)/10 text-(--color-text-primary)" },
+  DELIVERED: { label: "Selesai", className: "border border-(--color-success) bg-(--color-success)/10 text-(--color-success)" },
+  CANCELLED: { label: "Dibatalkan", className: "border border-(--color-danger) bg-(--color-danger)/10 text-(--color-danger)" },
 };
 
 export default function OrdersClient({ orders }: { orders: any[] }) {
   if (orders.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F4F0E7] p-5 text-center">
-        <div className="h-24 w-24 rounded-full bg-[#0B1F33]/5 flex items-center justify-center mb-6">
-          <PackageSearch className="h-10 w-10 text-[#0B1F33]/20" />
+      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-(--color-bg) p-5 text-center font-sans">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border-2 border-(--color-border) bg-(--color-surface) shadow-[4px_4px_0_rgba(139,94,60,0.2)]">
+          <PackageSearch className="h-8 w-8 text-(--color-text-secondary)" />
         </div>
-        <h2 className="text-2xl font-black uppercase tracking-widest text-[#0B1F33]">Belum Ada Pesanan</h2>
-        <p className="mt-2 text-sm text-[#0B1F33]/60 mb-8">Anda belum pernah melakukan transaksi apapun.</p>
-        <Link href="/" className="bg-[#0B1F33] text-[#E8E0D3] px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:bg-[#A88A3D] hover:text-[#0B1F33] transition-all shadow-lg">
+        <h2 className="text-2xl font-black uppercase tracking-wider text-(--color-primary-dark)">Belum Ada Pesanan</h2>
+        <p className="mt-2 text-sm text-(--color-text-secondary) mb-8">Anda belum pernah melakukan transaksi apapun.</p>
+        <Link href="/" className="rounded-md border-2 border-(--color-primary) bg-(--color-primary) px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-(--color-surface) shadow-[3px_3px_0_rgba(139,94,60,0.3)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary-dark)">
           Mulai Belanja
         </Link>
       </div>
@@ -35,9 +35,14 @@ export default function OrdersClient({ orders }: { orders: any[] }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F0E7] py-12 px-5 md:px-8">
+    <div className="min-h-screen bg-(--color-bg) py-12 px-5 md:px-8 font-sans">
       <div className="mx-auto max-w-4xl">
-        <h1 className="text-3xl font-black uppercase tracking-widest text-[#0B1F33] mb-8">Status Pesanan</h1>
+        
+        {/* HEADER */}
+        <div className="mb-8 rounded-xl border-2 border-(--color-border) bg-(--color-surface) px-6 py-6 shadow-[4px_4px_0_rgba(139,94,60,0.2)]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2) mb-1">Riwayat Transaksi</p>
+          <h1 className="text-3xl font-black uppercase tracking-wider text-(--color-primary-dark)">Status Pesanan</h1>
+        </div>
 
         <div className="space-y-4">
           {orders.map((order) => {
@@ -49,31 +54,31 @@ export default function OrdersClient({ orders }: { orders: any[] }) {
               <Link
                 key={order.id}
                 href={`/pesanan/${order.orderNumber}`}
-                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-[#0B1F33]/5 transition-all hover:shadow-md"
+                className="group flex items-center gap-4 rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-4 shadow-[4px_4px_0_rgba(139,94,60,0.15)] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(139,94,60,0.25)]"
               >
-                <div className="relative h-16 w-16 shrink-0 rounded-xl overflow-hidden bg-[#EDE6DA]">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-(--color-border) bg-(--color-bg)">
                   {product?.images?.[0] && (
                     <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                   )}
                 </div>
 
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#0B1F33]/50">{order.orderNumber}</p>
-                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ${status.className}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">{order.orderNumber}</p>
+                    <span className={`shrink-0 rounded px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${status.className}`}>
                       {status.label}
                     </span>
                   </div>
-                  <p className="mt-1 font-black uppercase tracking-wide text-[#0B1F33] text-sm truncate">
+                  <p className="mt-1 line-clamp-1 text-xs font-bold uppercase tracking-wide text-(--color-primary-dark)">
                     {product?.name}{order.items.length > 1 ? ` +${order.items.length - 1} barang lainnya` : ""}
                   </p>
                   <div className="mt-2 flex items-center justify-between">
-                    <p className="text-[10px] text-[#0B1F33]/50">{formatTanggal(order.createdAt)}</p>
-                    <p className="font-black text-[#A88A3D] text-sm">{formatRupiah(order.totalAmount)}</p>
+                    <p className="text-[10px] text-(--color-text-secondary)">{formatTanggal(order.createdAt)}</p>
+                    <p className="text-xs font-black text-(--color-primary-dark)">{formatRupiah(order.totalAmount)}</p>
                   </div>
                 </div>
 
-                <ChevronRight className="h-4 w-4 text-[#0B1F33]/30 shrink-0" />
+                <ChevronRight className="h-4 w-4 text-(--color-text-secondary) transition-transform group-hover:translate-x-1" />
               </Link>
             );
           })}

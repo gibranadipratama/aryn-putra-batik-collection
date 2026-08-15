@@ -29,42 +29,42 @@ export default function ConfirmModal({
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-[#0B1F33]/70 backdrop-blur-sm transition-opacity" 
+        className="absolute inset-0 bg-(--color-text-primary)/70 backdrop-blur-sm transition-opacity" 
         onClick={!isLoading ? onClose : undefined} 
       />
       
       {/* Modal Box */}
-      <div className="relative w-full max-w-md bg-[#F4F0E7] shadow-2xl p-6 text-center border-t-4 border-red-600">
+      <div className="relative w-full max-w-md rounded-lg border-2 border-(--color-border) bg-(--color-surface) p-6 text-center shadow-[6px_6px_0_rgba(139,94,60,0.3)] border-t-4 border-t-(--color-danger)">
         <button 
           onClick={!isLoading ? onClose : undefined} 
-          className="absolute right-4 top-4 text-[#0B1F33]/40 hover:bg-[#0B1F33]/5 hover:text-[#0B1F33] p-1 rounded-full transition"
+          className="absolute right-4 top-4 rounded-full p-1 text-(--color-text-secondary) transition hover:bg-(--color-bg) hover:text-(--color-text-primary)"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 mb-4 mt-2">
-          <AlertTriangle className="h-7 w-7 text-red-600" />
+        <div className="mx-auto mb-4 mt-2 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-danger)/10">
+          <AlertTriangle className="h-7 w-7 text-(--color-danger)" />
         </div>
 
-        <h2 className="text-lg font-black uppercase tracking-widest text-[#0B1F33] mb-2">
+        <h2 className="mb-2 text-lg font-bold text-(--color-text-primary)">
           {title}
         </h2>
-        <p className="text-xs text-[#0B1F33]/60 leading-relaxed mb-8">
+        <p className="mb-8 text-sm leading-relaxed text-(--color-text-secondary)">
           {message}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="w-full bg-[#EDE6DA] border border-[#0B1F33]/10 py-3 text-[10px] font-bold uppercase tracking-widest text-[#0B1F33] hover:bg-[#0B1F33]/5 transition disabled:opacity-50"
+            className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) py-3 text-xs font-bold uppercase tracking-wider text-(--color-text-primary) transition hover:bg-(--color-border) disabled:opacity-50"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="w-full bg-red-600 py-3 text-[10px] font-bold uppercase tracking-widest text-white hover:bg-red-700 transition disabled:opacity-50 flex justify-center items-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-(--color-danger) py-3 text-xs font-bold uppercase tracking-wider text-white shadow-[3px_3px_0_rgba(168,69,47,0.3)] transition hover:-translate-y-0.5 hover:opacity-90 disabled:opacity-50"
           >
             {isLoading ? "Memproses..." : confirmText}
           </button>

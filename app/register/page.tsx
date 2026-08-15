@@ -3,13 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { registerUser } from "@/actions/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,82 +28,96 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#F4F0E7] p-5">
-      {/* Background Glow */}
-      <div className="absolute -left-20 top-0 h-72 w-72 animate-pulse rounded-full bg-[#A88A3D]/20 blur-3xl"></div>
-      <div className="absolute -right-20 bottom-10 h-80 w-80 animate-pulse rounded-full bg-[#0B1F33]/10 blur-3xl"></div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-(--color-bg) p-5 font-sans">
+      
+      <div className="absolute inset-0 bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] bg-size-[16px_16px] opacity-30 pointer-events-none"></div>
 
-      <div className="relative z-10 w-full max-w-md transform rounded-3xl border border-white/60 bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
+      <div className="relative z-10 w-full max-w-md rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-8 shadow-[8px_8px_0_rgba(139,94,60,0.3)]">
         
-        {/* HEADER TANPA ICON - DIGANTI TEKS SAPAAN */}
         <div className="mb-8 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#A88A3D] mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2) mb-1.5">
             Aryn Putra Batik Collection
           </p>
-          <h1 className="text-3xl font-black uppercase tracking-wider text-[#0B1F33]">
+          <h1 className="text-3xl font-black uppercase tracking-wider text-(--color-primary-dark)">
             Buat Akun
           </h1>
-          <p className="mt-1 text-xs text-[#0B1F33]/60">
+          <p className="mt-1 text-xs text-(--color-text-secondary)">
             Daftarkan diri Anda untuk mulai berbelanja koleksi batik terbaik.
           </p>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="group relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#0B1F33]/40">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-(--color-text-secondary)">
               <User className="h-4 w-4" />
             </div>
             <input 
-              required type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} 
-              className="w-full rounded-xl border-2 border-transparent bg-[#0B1F33]/5 py-3.5 pl-11 pr-4 text-sm text-[#0B1F33] outline-none transition-all focus:border-[#A88A3D]/50 focus:bg-white focus:ring-4 focus:ring-[#A88A3D]/10" 
+              required 
+              type="text" 
+              value={formData.name} 
+              onChange={(e) => setFormData({...formData, name: e.target.value})} 
+              className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) py-3 pl-10 pr-4 text-xs font-medium text-(--color-text-primary) outline-none transition-all focus:border-(--color-primary) focus:shadow-[2px_2px_0_rgba(139,94,60,0.2)]" 
               placeholder="Nama Lengkap"
             />
           </div>
 
-          <div className="group relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#0B1F33]/40">
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-(--color-text-secondary)">
               <Mail className="h-4 w-4" />
             </div>
             <input 
-              required type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} 
-              className="w-full rounded-xl border-2 border-transparent bg-[#0B1F33]/5 py-3.5 pl-11 pr-4 text-sm text-[#0B1F33] outline-none transition-all focus:border-[#A88A3D]/50 focus:bg-white focus:ring-4 focus:ring-[#A88A3D]/10" 
+              required 
+              type="email" 
+              value={formData.email} 
+              onChange={(e) => setFormData({...formData, email: e.target.value})} 
+              className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) py-3 pl-10 pr-4 text-xs font-medium text-(--color-text-primary) outline-none transition-all focus:border-(--color-primary) focus:shadow-[2px_2px_0_rgba(139,94,60,0.2)]" 
               placeholder="Alamat Email"
             />
           </div>
 
-          <div className="group relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#0B1F33]/40">
+          {/* Input Password dengan Icon Mata */}
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-(--color-text-secondary)">
               <Lock className="h-4 w-4" />
             </div>
             <input 
-              required type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} 
-              className="w-full rounded-xl border-2 border-transparent bg-[#0B1F33]/5 py-3.5 pl-11 pr-4 text-sm text-[#0B1F33] outline-none transition-all focus:border-[#A88A3D]/50 focus:bg-white focus:ring-4 focus:ring-[#A88A3D]/10" 
+              required 
+              type={showPassword ? "text" : "password"} 
+              value={formData.password} 
+              onChange={(e) => setFormData({...formData, password: e.target.value})} 
+              className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) py-3 pl-10 pr-10 text-xs font-medium text-(--color-text-primary) outline-none transition-all focus:border-(--color-primary) focus:shadow-[2px_2px_0_rgba(139,94,60,0.2)]" 
               placeholder="Kata Sandi"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-(--color-text-secondary) transition-colors hover:text-(--color-primary-dark)"
+              aria-label="Tampilkan atau sembunyikan kata sandi"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
 
           <button 
             type="submit" 
             disabled={isPending}
-            className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1F33] py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#E8E0D3] shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#A88A3D] hover:text-[#0B1F33] disabled:opacity-50"
+            className="group mt-2 flex w-full items-center justify-center gap-2 rounded-md border-2 border-(--color-primary-dark) bg-(--color-primary-dark) py-3.5 text-xs font-bold uppercase tracking-widest text-(--color-surface) shadow-[3px_3px_0_rgba(99,50,26,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary) disabled:opacity-50"
           >
             {isPending ? "Mendaftarkan..." : "Daftar Sekarang"} 
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </form>
 
-        <div className="mt-8 text-center space-y-3 border-t border-[#0B1F33]/10 pt-6">
-          <p className="text-xs font-bold text-[#0B1F33]/60">
+        <div className="mt-8 space-y-3 border-t-2 border-(--color-border) pt-6 text-center">
+          <p className="text-xs font-bold text-(--color-text-secondary)">
             Sudah memiliki akun?{" "}
-            <Link href="/login" className="text-[#0B1F33] hover:text-[#A88A3D] underline underline-offset-4">
+            <Link href="/login" className="text-(--color-primary-dark) underline underline-offset-4 hover:text-(--color-primary)">
               Masuk di sini
             </Link>
           </p>
           
-          {/* NAVIGASI KEMBALI KE BERANDA */}
-          <div className="pt-3 mt-3 border-t border-[#0B1F33]/5">
-            <Link href="/" className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#0B1F33]/50 hover:text-[#A88A3D] transition-colors">
+          <div className="mt-4 border-t border-dashed border-(--color-border) pt-3">
+            <Link href="/" className="inline-block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary) transition-colors hover:text-(--color-primary-dark)">
               &larr; Kembali ke Beranda
             </Link>
           </div>
