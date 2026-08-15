@@ -35,7 +35,7 @@ export default function CartClient({ initialItems }: { initialItems: any[] }) {
       return;
     }
 
-    // Optimistic Update UI (Biar kerasa responsif dan ga lag)
+    // Optimistic Update UI
     setItems(items.map(i => i.id === itemId ? { ...i, quantity: newQty } : i));
 
     // Update ke Database via Server Action
@@ -65,20 +65,18 @@ export default function CartClient({ initialItems }: { initialItems: any[] }) {
   };
 
   const handleCheckout = () => {
-    // Nanti ini akan diarahkan ke halaman /checkout 
-    // di mana integrasi Payment Gateway dipanggil.
     router.push("/checkout");
   };
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F4F0E7] p-5 text-center">
-        <div className="h-24 w-24 rounded-full bg-[#0B1F33]/5 flex items-center justify-center mb-6">
-          <ShoppingBag className="h-10 w-10 text-[#0B1F33]/20" />
+      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-(--color-bg) p-5 text-center font-sans">
+        <div className="h-20 w-20 rounded-full border-2 border-(--color-border) bg-(--color-surface) flex items-center justify-center mb-6 shadow-[4px_4px_0_rgba(139,94,60,0.2)]">
+          <ShoppingBag className="h-8 w-8 text-(--color-text-secondary)" />
         </div>
-        <h2 className="text-2xl font-black uppercase tracking-widest text-[#0B1F33]">Keranjang Kosong</h2>
-        <p className="mt-2 text-sm text-[#0B1F33]/60 mb-8">Anda belum menambahkan koleksi batik apapun.</p>
-        <Link href="/" className="bg-[#0B1F33] text-[#E8E0D3] px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:bg-[#A88A3D] hover:text-[#0B1F33] transition-all shadow-lg">
+        <h2 className="text-2xl font-black uppercase tracking-wider text-(--color-primary-dark)">Keranjang Kosong</h2>
+        <p className="mt-2 text-sm text-(--color-text-secondary) mb-8">Anda belum menambahkan koleksi batik apapun.</p>
+        <Link href="/" className="rounded-md border-2 border-(--color-primary) bg-(--color-primary) px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-(--color-surface) shadow-[3px_3px_0_rgba(139,94,60,0.3)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary-dark)">
           Mulai Belanja
         </Link>
       </div>
@@ -86,9 +84,14 @@ export default function CartClient({ initialItems }: { initialItems: any[] }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F0E7] py-12 px-5 md:px-8">
+    <div className="min-h-screen bg-(--color-bg) py-12 px-5 md:px-8 font-sans">
       <div className="mx-auto max-w-6xl">
-        <h1 className="text-3xl font-black uppercase tracking-widest text-[#0B1F33] mb-8">Keranjang Anda</h1>
+        
+        {/* HEADER KERANJANG */}
+        <div className="mb-8 rounded-xl border-2 border-(--color-border) bg-(--color-surface) px-6 py-6 shadow-[4px_4px_0_rgba(139,94,60,0.2)]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2) mb-1">Manajemen Belanja</p>
+          <h1 className="text-3xl font-black uppercase tracking-wider text-(--color-primary-dark)">Keranjang Anda</h1>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           
@@ -101,54 +104,55 @@ export default function CartClient({ initialItems }: { initialItems: any[] }) {
                 : product.price;
 
               return (
-                <div key={item.id} className="flex gap-4 bg-white p-4 rounded-2xl shadow-sm border border-[#0B1F33]/5 relative overflow-hidden transition-all hover:shadow-md">
+                <div key={item.id} className="relative flex gap-4 rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-4 shadow-[4px_4px_0_rgba(139,94,60,0.15)] transition-all hover:shadow-[6px_6px_0_rgba(139,94,60,0.25)]">
                   
                   {/* Gambar Produk */}
-                  <div className="relative h-28 w-24 shrink-0 rounded-xl overflow-hidden bg-[#EDE6DA]">
+                  <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-md border border-(--color-border) bg-(--color-bg)">
                     <Image src={product.images[0] || "/batik-default.jpg"} alt={product.name} fill className="object-cover" />
                   </div>
 
                   {/* Info Produk */}
-                  <div className="flex flex-col justify-between flex-1 py-1">
+                  <div className="flex flex-1 flex-col justify-between py-0.5">
                     <div>
-                      <div className="flex justify-between items-start">
-                        <h3 className="font-black uppercase tracking-wide text-[#0B1F33] text-sm md:text-base line-clamp-1 pr-6">{product.name}</h3>
+                      <div className="flex items-start justify-between">
+                        <h3 className="pr-6 text-sm font-bold uppercase tracking-wide text-(--color-primary-dark) md:text-base line-clamp-1">{product.name}</h3>
                         <button 
                           onClick={() => handleRemove(item.id)}
                           disabled={isPending}
-                          className="text-red-400 hover:text-red-600 absolute right-4 top-4 transition-colors"
+                          className="absolute right-4 top-4 rounded p-1 text-(--color-danger) transition hover:bg-(--color-danger)/10"
+                          title="Hapus item"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#0B1F33]/50 mt-1">
-                        Ukuran: <span className="text-[#A88A3D]">{item.variant.size}</span>
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
+                        Ukuran: <span className="text-(--color-primary)">{item.variant.size}</span>
                       </p>
                     </div>
 
-                    <div className="flex items-end justify-between mt-4">
+                    <div className="mt-4 flex items-end justify-between">
                       {/* Harga */}
                       <div>
                         {product.discount > 0 && (
-                          <p className="text-[10px] line-through text-[#0B1F33]/40">{formatRupiah(product.price)}</p>
+                          <p className="text-[10px] text-(--color-text-secondary) line-through">{formatRupiah(product.price)}</p>
                         )}
-                        <p className="font-black text-[#0B1F33] text-sm md:text-base">{formatRupiah(finalPrice)}</p>
+                        <p className="text-sm font-bold text-(--color-text-primary) md:text-base">{formatRupiah(finalPrice)}</p>
                       </div>
 
                       {/* Kontrol Kuantitas */}
-                      <div className="flex items-center gap-3 bg-[#0B1F33]/5 rounded-lg p-1 border border-[#0B1F33]/10">
+                      <div className="flex items-center gap-2 rounded-md border-2 border-(--color-border) bg-(--color-bg) p-1">
                         <button 
                           onClick={() => handleUpdateQuantity(item.id, item.quantity, -1, item.variant.stock)}
                           disabled={item.quantity <= 1 || isPending}
-                          className="h-6 w-6 flex items-center justify-center rounded-md bg-white shadow-sm text-[#0B1F33] disabled:opacity-50 hover:bg-[#A88A3D] hover:text-white transition"
+                          className="flex h-6 w-6 items-center justify-center rounded border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) transition hover:bg-(--color-primary) hover:text-(--color-surface) disabled:opacity-40"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="text-xs font-black w-4 text-center text-[#0B1F33]">{item.quantity}</span>
+                        <span className="w-5 text-center text-xs font-bold text-(--color-text-primary)">{item.quantity}</span>
                         <button 
                           onClick={() => handleUpdateQuantity(item.id, item.quantity, 1, item.variant.stock)}
                           disabled={item.quantity >= item.variant.stock || isPending}
-                          className="h-6 w-6 flex items-center justify-center rounded-md bg-white shadow-sm text-[#0B1F33] disabled:opacity-50 hover:bg-[#A88A3D] hover:text-white transition"
+                          className="flex h-6 w-6 items-center justify-center rounded border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) transition hover:bg-(--color-primary) hover:text-(--color-surface) disabled:opacity-40"
                         >
                           <Plus className="h-3 w-3" />
                         </button>
@@ -162,34 +166,34 @@ export default function CartClient({ initialItems }: { initialItems: any[] }) {
 
           {/* BAGIAN KANAN: RINGKASAN & PEMBAYARAN */}
           <div className="lg:w-1/3">
-            <div className="sticky top-24 bg-[#0B1F33] text-[#E8E0D3] rounded-3xl p-6 shadow-2xl">
-              <h3 className="text-sm font-black uppercase tracking-widest border-b border-white/10 pb-4 mb-4">Ringkasan Pesanan</h3>
+            <div className="sticky top-24 rounded-xl border-2 border-(--color-border) bg-(--color-primary-dark) p-6 text-(--color-surface) shadow-[6px_6px_0_rgba(139,94,60,0.3)]">
+              <h3 className="mb-4 border-b-2 border-(--color-border) pb-4 text-xs font-bold uppercase tracking-widest text-(--color-accent)">Ringkasan Pesanan</h3>
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="opacity-70">Total Harga ({items.length} Barang)</span>
+                  <span className="text-xs opacity-80">Total Harga ({items.length} Barang)</span>
                   <span className="font-bold">{formatRupiah(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="opacity-70">Biaya Pengiriman</span>
-                  <span className="font-bold text-[#A88A3D]">Dihitung di Checkout</span>
+                  <span className="text-xs opacity-80">Biaya Pengiriman</span>
+                  <span className="font-bold text-(--color-accent)">Dihitung di Checkout</span>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 mt-6 pt-4 flex justify-between items-center">
-                <span className="text-xs font-black uppercase tracking-widest">Total Belanja</span>
-                <span className="text-xl font-black text-[#A88A3D]">{formatRupiah(subtotal)}</span>
+              <div className="mt-6 flex items-center justify-between border-t-2 border-(--color-border) pt-4">
+                <span className="text-xs font-bold uppercase tracking-widest">Total Belanja</span>
+                <span className="text-lg font-black text-(--color-accent)">{formatRupiah(subtotal)}</span>
               </div>
 
               <button 
                 onClick={handleCheckout}
-                className="mt-8 group flex w-full items-center justify-center gap-2 rounded-xl bg-[#A88A3D] py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#0B1F33] shadow-lg transition-all hover:bg-white"
+                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-md bg-(--color-accent) py-3.5 text-xs font-bold uppercase tracking-widest text-(--color-text-primary) shadow-[3px_3px_0_rgba(58,40,27,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-surface)"
               >
                 Lanjut ke Pembayaran <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              <div className="mt-4 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/40">
-                <ShieldCheck className="h-3 w-3" /> Transaksi Aman & Terenkripsi
+              <div className="mt-4 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest opacity-70">
+                <ShieldCheck className="h-3.5 w-3.5 text-(--color-accent)" /> Transaksi Aman & Terenkripsi
               </div>
             </div>
           </div>

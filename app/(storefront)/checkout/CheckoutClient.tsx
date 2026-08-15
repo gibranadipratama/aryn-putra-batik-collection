@@ -15,7 +15,6 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Hitung Subtotal
   const subtotal = cartItems.reduce((total, item) => {
     const product = item.variant.product;
     const finalPrice = product.discount > 0 
@@ -30,22 +29,25 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
       
       if (res.success) {
         toast.success(res.message || "Mengarahkan ke pembayaran...");
-        // Untuk sementara diarahkan ke halaman invoice/sukses
-        // Nanti ini akan diganti dengan memunculkan Popup Midtrans Snap
         router.push(`/pesanan/${res.orderNumber}`); 
       } else {
         toast.error(res.message || "Gagal memproses pesanan.");
         if (res.requireProfileUpdate) {
-          router.push("/akun"); // Lempar ke profil jika alamat kosong
+          router.push("/akun"); 
         }
       }
     });
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F0E7] py-12 px-5 md:px-8">
+    <div className="min-h-screen bg-(--color-bg) py-12 px-5 md:px-8 font-sans">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-black uppercase tracking-widest text-[#0B1F33] mb-8">Checkout Pesanan</h1>
+        
+        {/* HEADER */}
+        <div className="mb-8 rounded-xl border-2 border-(--color-border) bg-(--color-surface) px-6 py-6 shadow-[4px_4px_0_rgba(139,94,60,0.2)]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2) mb-1">Konfirmasi Akhir</p>
+          <h1 className="text-3xl font-black uppercase tracking-wider text-(--color-primary-dark)">Checkout Pesanan</h1>
+        </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           
@@ -53,31 +55,31 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
           <div className="lg:col-span-2 space-y-6">
             
             {/* Box Alamat Pengiriman */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#0B1F33]/5">
-              <div className="flex items-center justify-between mb-4 border-b border-[#0B1F33]/10 pb-4">
-                <h2 className="text-sm font-black uppercase tracking-widest text-[#0B1F33] flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#A88A3D]" /> Alamat Pengiriman
+            <div className="rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-6 shadow-[4px_4px_0_rgba(139,94,60,0.15)]">
+              <div className="mb-4 flex items-center justify-between border-b-2 border-(--color-border) pb-4">
+                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-(--color-primary-dark)">
+                  <MapPin className="h-4 w-4 text-(--color-accent-2)" /> Alamat Pengiriman
                 </h2>
-                <button onClick={() => router.push("/akun")} className="text-[10px] font-bold uppercase text-[#A88A3D] hover:text-[#0B1F33]">Ubah Alamat</button>
+                <button onClick={() => router.push("/akun")} className="text-[10px] font-bold uppercase tracking-wider text-(--color-primary) hover:underline">Ubah Alamat</button>
               </div>
               
               {user.address && user.phone ? (
-                <div className="text-sm text-[#0B1F33]/80 leading-relaxed">
-                  <p className="font-bold text-[#0B1F33] mb-1">{user.name}</p>
-                  <p className="flex items-center gap-2 mb-2"><Phone className="h-3 w-3" /> {user.phone}</p>
-                  <p>{user.address}</p>
+                <div className="text-xs leading-relaxed text-(--color-text-primary)">
+                  <p className="mb-1 font-bold">{user.name}</p>
+                  <p className="mb-2 flex items-center gap-2 text-(--color-text-secondary)"><Phone className="h-3 w-3" /> {user.phone}</p>
+                  <p className="text-(--color-text-secondary)">{user.address}</p>
                 </div>
               ) : (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-xs font-bold flex flex-col gap-2">
+                <div className="rounded-md border-2 border-(--color-danger) bg-(--color-danger)/10 p-4 text-xs font-bold text-(--color-danger) flex flex-col gap-2">
                   <p>Anda belum melengkapi alamat pengiriman dan nomor handphone.</p>
-                  <button onClick={() => router.push("/akun")} className="bg-red-600 text-white py-2 px-4 rounded-lg self-start">Lengkapi Sekarang</button>
+                  <button onClick={() => router.push("/akun")} className="rounded bg-(--color-danger) py-2 px-4 text-white uppercase tracking-wider self-start transition hover:opacity-90">Lengkapi Sekarang</button>
                 </div>
               )}
             </div>
 
             {/* Box Rincian Produk */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#0B1F33]/5">
-              <h2 className="text-sm font-black uppercase tracking-widest text-[#0B1F33] mb-4 border-b border-[#0B1F33]/10 pb-4">Rincian Barang</h2>
+            <div className="rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-6 shadow-[4px_4px_0_rgba(139,94,60,0.15)]">
+              <h2 className="mb-4 border-b-2 border-(--color-border) pb-4 text-xs font-bold uppercase tracking-widest text-(--color-primary-dark)">Rincian Barang</h2>
               
               <div className="space-y-4">
                 {cartItems.map((item) => {
@@ -85,14 +87,14 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
                   const finalPrice = product.discount > 0 ? product.price - (product.price * product.discount) / 100 : product.price;
 
                   return (
-                    <div key={item.id} className="flex gap-4">
-                      <div className="relative h-20 w-16 shrink-0 rounded-lg overflow-hidden bg-[#EDE6DA]">
+                    <div key={item.id} className="flex gap-4 border-b border-dashed border-(--color-border) pb-4 last:border-0 last:pb-0">
+                      <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-md border border-(--color-border) bg-(--color-bg)">
                         <Image src={product.images[0] || "/batik-default.jpg"} alt={product.name} fill className="object-cover" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-sm uppercase tracking-wide text-[#0B1F33]">{product.name}</h3>
-                        <p className="text-[10px] uppercase text-[#0B1F33]/50 mt-1">Ukuran: {item.variant.size} • Qty: {item.quantity}</p>
-                        <p className="font-black text-[#A88A3D] mt-2">{formatRupiah(finalPrice * item.quantity)}</p>
+                        <h3 className="text-xs font-bold uppercase tracking-wide text-(--color-primary-dark)">{product.name}</h3>
+                        <p className="mt-1 text-[10px] uppercase text-(--color-text-secondary)">Ukuran: <span className="font-bold text-(--color-primary)">{item.variant.size}</span> • Qty: {item.quantity}</p>
+                        <p className="mt-2 text-xs font-black text-(--color-primary-dark)">{formatRupiah(finalPrice * item.quantity)}</p>
                       </div>
                     </div>
                   );
@@ -104,29 +106,29 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
 
           {/* KOLOM KANAN: TOTAL & TOMBOL BAYAR */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-[#0B1F33] text-[#E8E0D3] rounded-3xl p-6 shadow-2xl">
-              <h3 className="text-sm font-black uppercase tracking-widest border-b border-white/10 pb-4 mb-4">Ringkasan Pembayaran</h3>
+            <div className="sticky top-24 rounded-xl border-2 border-(--color-border) bg-(--color-primary-dark) p-6 text-(--color-surface) shadow-[6px_6px_0_rgba(139,94,60,0.3)]">
+              <h3 className="mb-4 border-b-2 border-(--color-border) pb-4 text-xs font-bold uppercase tracking-widest text-(--color-accent)">Ringkasan Pembayaran</h3>
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="opacity-70">Subtotal</span>
+                  <span className="text-xs opacity-80">Subtotal</span>
                   <span className="font-bold">{formatRupiah(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="opacity-70">Pengiriman</span>
-                  <span className="font-bold text-[#A88A3D]">Gratis</span>
+                  <span className="text-xs opacity-80">Pengiriman</span>
+                  <span className="font-bold text-(--color-accent)">Gratis</span>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 mt-6 pt-4 flex justify-between items-center">
-                <span className="text-xs font-black uppercase tracking-widest">Total Bayar</span>
-                <span className="text-xl font-black text-[#A88A3D]">{formatRupiah(subtotal)}</span>
+              <div className="mt-6 flex items-center justify-between border-t-2 border-(--color-border) pt-4">
+                <span className="text-xs font-bold uppercase tracking-widest">Total Bayar</span>
+                <span className="text-lg font-black text-(--color-accent)">{formatRupiah(subtotal)}</span>
               </div>
 
               <button 
                 onClick={handleProcessPayment}
                 disabled={isPending || !user.address || !user.phone}
-                className="mt-8 group flex w-full items-center justify-center gap-2 rounded-xl bg-[#A88A3D] py-4 text-xs font-black uppercase tracking-[0.2em] text-[#0B1F33] shadow-lg transition-all hover:bg-white disabled:opacity-50 disabled:pointer-events-none"
+                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-md bg-(--color-accent) py-3.5 text-xs font-bold uppercase tracking-widest text-(--color-text-primary) shadow-[3px_3px_0_rgba(58,40,27,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-surface) disabled:opacity-50 disabled:pointer-events-none"
               >
                 {isPending ? (
                   <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</>
@@ -135,8 +137,8 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
                 )}
               </button>
 
-              <div className="mt-4 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/40">
-                <ShieldCheck className="h-3 w-3" /> Transaksi Terlindungi
+              <div className="mt-4 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest opacity-70">
+                <ShieldCheck className="h-3.5 w-3.5 text-(--color-accent)" /> Transaksi Terlindungi
               </div>
             </div>
           </div>

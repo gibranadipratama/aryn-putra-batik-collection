@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+:root {
+  --color-primary: #8B4A2B;
+  --color-primary-dark: #63321A;
+  --color-primary-light: #E3B37A;
+  --color-accent: #D89A3E;
+  --color-accent-2: #B5583F;
+  --color-bg: #F5EEE1;
+  --color-surface: #FFFBF3;
+  --color-border: #C9A876;
+  --color-text-primary: #3A281B;
+  --color-text-secondary: #7A5C42;
+  --color-success: #5C7A44;
+  --color-warning: #C77B3E;
+  --color-danger: #A8452F;
+}

@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, ShieldCheck, Truck, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
-import { addToCart } from "@/actions/cart"; // <-- Mengimpor action yang baru dibuat
+import { addToCart } from "@/actions/cart"; 
 
 const formatRupiah = (angka: number) => {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
@@ -17,12 +17,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   
-  // Memilih varian pertama secara default
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
 
-  // Fungsi dinamis untuk kedua tombol
   const handleAction = (isBuyNow: boolean) => {
-    // 1. Cek apakah user sudah login
     if (status === "unauthenticated") {
       toast.error("Silakan masuk (login) untuk melanjutkan transaksi.");
       router.push("/login");
@@ -35,14 +32,13 @@ export default function ProductDetailClient({ product }: { product: any }) {
       return;
     }
 
-    // 2. Kirim data ke database
     startTransition(async () => {
       const res = await addToCart(userId, selectedVariant.id, 1);
       
       if (res.success) {
         if (isBuyNow) {
           toast.success("Mengarahkan ke pembayaran...");
-          router.push("/keranjang"); // Bawa ke keranjang untuk proses checkout selanjutnya
+          router.push("/keranjang"); 
         } else {
           toast.success(`${product.name} (Ukuran ${selectedVariant.size}) berhasil masuk keranjang!`);
         }
@@ -53,53 +49,56 @@ export default function ProductDetailClient({ product }: { product: any }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F0E7] py-12 md:py-20">
+    <div className="min-h-screen bg-(--color-bg) py-12 md:py-20 text-(--color-text-primary)">
       <div className="mx-auto max-w-6xl px-5 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           
-          {/* GALERI GAMBAR */}
+          {/* GALERI GAMBAR - Retro Card Style */}
           <div className="space-y-4">
-            <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-[#EDE6DA] shadow-xl">
+            <div className="relative aspect-square w-full overflow-hidden rounded-xl border-2 border-(--color-border) bg-(--color-surface) shadow-[8px_8px_0_rgba(139,94,60,0.3)]">
               <Image src={product.images[0] || "/batik-default.jpg"} alt={product.name} fill className="object-cover" />
             </div>
           </div>
 
           {/* INFORMASI PRODUK */}
           <div className="flex flex-col">
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#A88A3D]">{product.category.name}</p>
-            <h1 className="mt-2 text-3xl md:text-5xl font-black uppercase tracking-widest text-[#0B1F33]">{product.name}</h1>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2)">{product.category.name}</p>
+            <h1 className="mt-2 text-3xl font-black uppercase tracking-wider text-(--color-primary-dark) md:text-5xl">{product.name}</h1>
             
-            <div className="mt-6">
+            <div className="mt-6 border-y-2 border-(--color-border) py-4">
               {product.discount > 0 ? (
                 <div className="flex items-center gap-4">
-                  <p className="text-2xl font-black text-red-600">{formatRupiah(product.price - (product.price * product.discount) / 100)}</p>
-                  <p className="text-sm line-through text-[#0B1F33]/40">{formatRupiah(product.price)}</p>
+                  <p className="text-2xl font-black text-(--color-primary-dark)">{formatRupiah(product.price - (product.price * product.discount) / 100)}</p>
+                  <p className="text-sm text-(--color-text-secondary) line-through opacity-80">{formatRupiah(product.price)}</p>
+                  <span className="rounded-md border border-(--color-danger) bg-(--color-danger) px-2 py-1 text-[10px] font-bold uppercase text-white shadow-[2px_2px_0_rgba(168,69,47,0.3)]">
+                    Hemat {product.discount}%
+                  </span>
                 </div>
               ) : (
-                <p className="text-2xl font-black text-[#0B1F33]">{formatRupiah(product.price)}</p>
+                <p className="text-2xl font-black text-(--color-primary-dark)">{formatRupiah(product.price)}</p>
               )}
             </div>
 
-            <p className="mt-8 text-sm leading-relaxed text-[#0B1F33]/70">{product.description}</p>
+            <p className="mt-6 text-sm leading-relaxed text-(--color-text-secondary)">{product.description}</p>
 
-            {/* PEMILIH VARIAN (UKURAN & STOK) */}
+            {/* PEMILIH VARIAN */}
             <div className="mt-8">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#0B1F33]">Pilih Ukuran</p>
-                <p className="text-[10px] font-bold text-[#0B1F33]/50">
-                  Sisa Stok: <span className={selectedVariant.stock > 0 ? "text-[#A88A3D]" : "text-red-500"}>{selectedVariant.stock}</span>
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-primary)">Pilih Ukuran</p>
+                <p className="text-xs font-bold text-(--color-text-secondary)">
+                  Sisa Stok: <span className={selectedVariant.stock > 0 ? "text-(--color-primary)" : "text-(--color-danger)"}>{selectedVariant.stock}</span>
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {product.variants.map((variant: any) => (
                   <button
                     key={variant.id}
                     onClick={() => setSelectedVariant(variant)}
-                    className={`h-12 w-12 rounded-xl border-2 font-black transition-all ${
+                    className={`h-12 w-14 rounded-md border-2 font-bold transition-all ${
                       selectedVariant.id === variant.id 
-                        ? "border-[#A88A3D] bg-[#0B1F33] text-white" 
-                        : "border-[#0B1F33]/10 bg-white hover:border-[#A88A3D]"
-                    } ${variant.stock === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+                        ? "border-(--color-primary-dark) bg-(--color-primary-dark) text-(--color-surface) shadow-[3px_3px_0_rgba(99,50,26,0.5)]" 
+                        : "border-(--color-border) bg-(--color-surface) text-(--color-text-primary) hover:-translate-y-0.5 hover:border-(--color-primary) hover:shadow-[2px_2px_0_rgba(139,94,60,0.3)]"
+                    } ${variant.stock === 0 ? "cursor-not-allowed opacity-40" : ""}`}
                   >
                     {variant.size}
                   </button>
@@ -107,36 +106,34 @@ export default function ProductDetailClient({ product }: { product: any }) {
               </div>
             </div>
 
-            {/* TOMBOL AKSI GANDA (KERANJANG & CHECKOUT) */}
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              
-              {/* Tombol Keranjang (Garis Tepi) */}
+            {/* TOMBOL AKSI GANDA */}
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              {/* Tombol Keranjang */}
               <button 
                 onClick={() => handleAction(false)}
                 disabled={isPending || selectedVariant.stock === 0}
-                className="flex-1 flex items-center justify-center gap-3 rounded-2xl border-2 border-[#0B1F33] bg-transparent py-4 text-xs font-black uppercase tracking-[0.2em] text-[#0B1F33] transition-all hover:bg-[#0B1F33] hover:text-[#E8E0D3] disabled:pointer-events-none disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-3 rounded-md border-2 border-(--color-primary-dark) bg-(--color-surface) py-4 text-xs font-bold uppercase tracking-wider text-(--color-primary-dark) shadow-[4px_4px_0_rgba(99,50,26,0.2)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary-dark) hover:text-(--color-surface) disabled:pointer-events-none disabled:opacity-50"
               >
                 <ShoppingBag className="h-4 w-4" /> Masukkan Keranjang
               </button>
 
-              {/* Tombol Beli Sekarang (Solid Gold) */}
+              {/* Tombol Beli Sekarang */}
               <button 
                 onClick={() => handleAction(true)}
                 disabled={isPending || selectedVariant.stock === 0}
-                className="flex-1 flex items-center justify-center gap-3 rounded-2xl bg-[#A88A3D] py-4 text-xs font-black uppercase tracking-[0.2em] text-[#0B1F33] shadow-xl shadow-[#A88A3D]/20 transition-all hover:-translate-y-1 hover:bg-[#0B1F33] hover:text-[#E8E0D3] disabled:pointer-events-none disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-3 rounded-md border-2 border-(--color-primary-dark) bg-(--color-primary-dark) py-4 text-xs font-bold uppercase tracking-wider text-(--color-surface) shadow-[4px_4px_0_rgba(99,50,26,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary) disabled:pointer-events-none disabled:opacity-50"
               >
                 Beli Sekarang <ArrowRight className="h-4 w-4" />
               </button>
-              
             </div>
 
             {/* INFO TAMBAHAN */}
-            <div className="mt-8 space-y-4 border-t border-[#0B1F33]/10 pt-8">
-              <div className="flex items-center gap-3 text-xs font-bold text-[#0B1F33]/70">
-                <ShieldCheck className="h-4 w-4 text-[#A88A3D]" /> Garansi Keaslian Batik
+            <div className="mt-10 space-y-4 rounded-lg border-2 border-dashed border-(--color-border) bg-(--color-surface) p-6">
+              <div className="flex items-center gap-3 text-xs font-bold text-(--color-text-primary)">
+                <ShieldCheck className="h-5 w-5 text-(--color-accent-2)" /> Garansi Keaslian Batik
               </div>
-              <div className="flex items-center gap-3 text-xs font-bold text-[#0B1F33]/70">
-                <Truck className="h-4 w-4 text-[#A88A3D]" /> Gratis Ongkir Seluruh Indonesia
+              <div className="flex items-center gap-3 text-xs font-bold text-(--color-text-primary)">
+                <Truck className="h-5 w-5 text-(--color-accent-2)" /> Gratis Ongkir Seluruh Indonesia
               </div>
             </div>
           </div>

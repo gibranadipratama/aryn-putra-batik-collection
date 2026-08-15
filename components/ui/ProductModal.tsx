@@ -30,9 +30,7 @@ export default function ProductModal({
   const [categoryId, setCategoryId] = useState("");
   const [imageBase64, setImageBase64] = useState("");
 
-  const [variants, setVariants] = useState<{ size: string; stock: number }[]>(
-    [],
-  );
+  const [variants, setVariants] = useState<{ size: string; stock: number }[]>([]);
 
   useEffect(() => {
     if (initialData) {
@@ -148,32 +146,35 @@ export default function ProductModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       <div
-        className="absolute inset-0 bg-[#0B1F33]/70 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-(--color-text-primary)/70 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-[#F4F0E7] shadow-2xl">
-        <div className="flex items-center justify-between border-b border-[#0B1F33]/10 bg-white px-6 py-4">
-          <h2 className="text-lg font-black uppercase tracking-wider text-[#0B1F33]">
+      <div className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl border-2 border-(--color-border) bg-(--color-bg) shadow-[8px_8px_0_rgba(139,94,60,0.3)]">
+        {/* Header Modal */}
+        <div className="flex items-center justify-between border-b-2 border-(--color-border) bg-(--color-surface) px-6 py-4">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-(--color-primary-dark)">
             {initialData ? "Edit Produk" : "Tambah Produk Baru"}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 hover:bg-[#0B1F33]/5 text-[#0B1F33]"
+            className="rounded-full p-2 text-(--color-text-secondary) hover:bg-(--color-border) hover:text-(--color-primary-dark)"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
+        {/* Konten Scrollable */}
         <div className="overflow-y-auto p-6">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 gap-8 lg:grid-cols-3"
           >
-            <div className="space-y-5 bg-white shadow-sm border border-[#0B1F33]/5 p-6 lg:col-span-2">
+            {/* Kiri: Data Utama */}
+            <div className="space-y-5 rounded-lg border-2 border-(--color-border) bg-(--color-surface) p-6 lg:col-span-2">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-2">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                     Nama Produk
                   </label>
                   <input
@@ -181,18 +182,18 @@ export default function ProductModal({
                     required
                     value={name}
                     onChange={handleNameChange}
-                    className="w-full border border-[#0B1F33]/10 bg-[#EDE6DA] p-3 text-xs outline-none focus:border-[#A88A3D]"
+                    className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) p-3 text-sm text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-2">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                     Kategori
                   </label>
                   <select
                     required
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full border border-[#0B1F33]/10 bg-[#EDE6DA] p-3 text-xs outline-none focus:border-[#A88A3D]"
+                    className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) p-3 text-sm text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
                   >
                     <option value="" disabled>
                       -- Pilih Kategori --
@@ -208,7 +209,7 @@ export default function ProductModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-2">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                     Harga Asli (Rp)
                   </label>
                   <input
@@ -216,11 +217,11 @@ export default function ProductModal({
                     required
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full border border-[#0B1F33]/10 bg-[#EDE6DA] p-3 text-xs outline-none focus:border-[#A88A3D]"
+                    className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) p-3 text-sm text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-2">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                     Diskon (%) - Opsional
                   </label>
                   <input
@@ -228,13 +229,13 @@ export default function ProductModal({
                     value={discount}
                     onChange={(e) => setDiscount(e.target.value)}
                     placeholder="Contoh: 15"
-                    className="w-full border border-[#0B1F33]/10 bg-[#EDE6DA] p-3 text-xs outline-none focus:border-[#A88A3D]"
+                    className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) p-3 text-sm text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-2">
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                   Deskripsi Produk
                 </label>
                 <textarea
@@ -242,33 +243,36 @@ export default function ProductModal({
                   required
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border border-[#0B1F33]/10 bg-[#EDE6DA] p-3 text-xs outline-none focus:border-[#A88A3D]"
+                  className="w-full rounded-md border-2 border-(--color-border) bg-(--color-bg) p-3 text-sm text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
                 />
               </div>
             </div>
 
+            {/* Kanan: Gambar & Varian */}
             <div className="space-y-6">
-              <div className="bg-white shadow-sm border border-[#0B1F33]/5 p-6 text-center">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/60 mb-4 text-left">
+              
+              {/* Box Upload */}
+              <div className="rounded-lg border-2 border-(--color-border) bg-(--color-surface) p-6 text-center">
+                <label className="mb-4 block text-left text-[10px] font-bold uppercase tracking-widest text-(--color-text-secondary)">
                   Foto Produk (Max 2MB)
                 </label>
-                <div className="relative flex min-h-30 cursor-pointer flex-col items-center justify-center border-2 border-dashed border-[#0B1F33]/20 bg-[#EDE6DA] transition hover:border-[#A88A3D]">
+                <div className="relative flex min-h-35 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-(--color-border) bg-(--color-bg) transition hover:border-(--color-primary)">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                   />
                   {imageBase64 ? (
                     <img
                       src={imageBase64}
                       alt="Preview"
-                      className="absolute inset-0 h-full w-full object-cover"
+                      className="absolute inset-0 h-full w-full rounded-md object-cover"
                     />
                   ) : (
                     <>
-                      <UploadCloud className="h-8 w-8 text-[#0B1F33]/30 mb-2" />
-                      <span className="text-[10px] font-bold text-[#0B1F33]/50">
+                      <UploadCloud className="mb-2 h-8 w-8 text-(--color-text-secondary)/60" />
+                      <span className="text-xs font-bold text-(--color-text-secondary)">
                         Klik untuk upload file
                       </span>
                     </>
@@ -276,21 +280,22 @@ export default function ProductModal({
                 </div>
               </div>
 
-              <div className="bg-white shadow-sm border border-[#0B1F33]/5 p-6">
-                <div className="flex items-center justify-between mb-4 border-b border-[#0B1F33]/10 pb-3">
-                  <h3 className="text-[10px] font-black uppercase tracking-wider text-[#0B1F33]">
+              {/* Box Varian */}
+              <div className="rounded-lg border-2 border-(--color-border) bg-(--color-surface) p-6">
+                <div className="mb-4 flex items-center justify-between border-b-2 border-(--color-border) pb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-(--color-primary-dark)">
                     Ukuran & Stok
                   </h3>
-                  <span className="text-[9px] font-bold uppercase bg-[#0B1F33] text-[#A88A3D] px-2 py-1 rounded-sm">
+                  <span className="rounded-md bg-(--color-primary) px-2.5 py-1 text-[10px] font-bold uppercase text-(--color-surface)">
                     Total Stok: {totalStock}
                   </span>
                 </div>
 
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                <div className="max-h-40 space-y-2 overflow-y-auto pr-2">
                   {variants.map((v, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 bg-[#EDE6DA] p-1.5 border border-[#0B1F33]/10"
+                      className="flex items-center gap-2 rounded-md border-2 border-(--color-border) bg-(--color-bg) p-1.5"
                     >
                       <input
                         type="text"
@@ -298,11 +303,11 @@ export default function ProductModal({
                         onChange={(e) =>
                           handleVariantChange(index, "size", e.target.value)
                         }
-                        className="w-1/3 bg-transparent p-1.5 text-xs font-bold outline-none uppercase text-[#0B1F33]"
+                        className="w-1/3 bg-transparent p-1.5 text-xs font-bold uppercase text-(--color-text-primary) outline-none"
                         placeholder="Size"
                       />
                       <div className="flex w-2/3 items-center gap-2">
-                        <span className="text-[9px] font-bold text-[#0B1F33]/40">
+                        <span className="text-[10px] font-bold text-(--color-text-secondary)">
                           STOK:
                         </span>
                         <input
@@ -316,14 +321,14 @@ export default function ProductModal({
                               Number(e.target.value),
                             )
                           }
-                          className="w-full bg-white p-1.5 text-xs outline-none border border-[#0B1F33]/10 focus:border-[#A88A3D] text-[#0B1F33]"
+                          className="w-full rounded bg-(--color-surface) p-1.5 text-xs text-(--color-text-primary) outline-none transition focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary)"
                         />
                         <button
                           type="button"
                           onClick={() =>
                             setVariants(variants.filter((_, i) => i !== index))
                           }
-                          className="text-red-500 p-1.5 hover:bg-red-50 hover:text-red-700 transition"
+                          className="rounded p-1.5 text-(--color-danger) transition hover:bg-(--color-danger)/10"
                           title="Hapus Ukuran"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -338,16 +343,17 @@ export default function ProductModal({
                   onClick={() =>
                     setVariants([...variants, { size: "", stock: 0 }])
                   }
-                  className="w-full mt-3 border border-[#0B1F33]/20 py-2.5 text-[9px] font-bold uppercase text-[#0B1F33] hover:bg-[#0B1F33] hover:text-[#E8E0D3] transition"
+                  className="mt-3 w-full rounded-md border-2 border-(--color-primary) py-2.5 text-xs font-bold uppercase text-(--color-primary) transition hover:bg-(--color-primary) hover:text-(--color-surface)"
                 >
                   + Ukuran Lain
                 </button>
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-[#0B1F33] py-4 text-center text-xs font-black uppercase tracking-[0.2em] text-[#E8E0D3] transition hover:bg-[#A88A3D] hover:text-[#0B1F33] disabled:opacity-50 shadow-md"
+                className="w-full rounded-md bg-(--color-primary) py-4 text-center text-xs font-bold uppercase tracking-widest text-(--color-surface) shadow-[4px_4px_0_rgba(139,94,60,0.3)] transition hover:-translate-y-0.5 hover:bg-(--color-primary-dark) disabled:opacity-50"
               >
                 {isPending
                   ? "Menyimpan..."
