@@ -4,7 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { getOrderDetail } from "@/actions/order";
 import OrderDetailClient from "./OrderDetailClient";
 
-export default async function OrderDetailPage({ params }: { params: { orderNumber: string } }) {
+export default async function OrderDetailPage({
+  params,
+}: {
+  params: Promise<{ orderNumber: string }>;
+}) {
+  const { orderNumber } = await params;
+
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -12,7 +18,7 @@ export default async function OrderDetailPage({ params }: { params: { orderNumbe
   }
 
   const userId = (session.user as any).id;
-  const res = await getOrderDetail(params.orderNumber, userId);
+  const res = await getOrderDetail(orderNumber, userId);
 
   if (!res.success || !res.order) {
     notFound();

@@ -9,21 +9,21 @@ export async function createProduct(formData: {
   slug: string;
   description: string;
   price: number;
+  discount?: number; // <-- Ditambahkan
   categoryId: string;
   images: string[];
   variants: { size: string; stock: number }[];
 }) {
   try {
-    // 1. Simpan produk baru beserta variannya ke database menggunakan Prisma
     await prisma.product.create({
       data: {
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
         price: Number(formData.price),
+        discount: Number(formData.discount) || 0, // <-- Diskon disimpan di sini
         images: formData.images,
         categoryId: formData.categoryId,
-        // Menyimpan varian ukuran dan stok secara otomatis bersama produk
         variants: {
           create: formData.variants.map((v) => ({
             size: v.size,
@@ -33,7 +33,6 @@ export async function createProduct(formData: {
       },
     });
 
-    // 2. Revalidasi halaman produk agar data terbaru langsung muncul di UI
     revalidatePath("/dashboard/produk");
     revalidatePath("/produk");
 
@@ -48,10 +47,10 @@ export async function createProduct(formData: {
 export async function getLatestProducts() {
   try {
     const products = await prisma.product.findMany({
-      take: 3, // Mengambil 3 produk terbaru untuk beranda
+      take: 3,
       orderBy: { createdAt: "desc" },
       include: {
-        category: true, // Mengambil data relasi kategori
+        category: true,
       },
     });
     return products;
@@ -61,15 +60,12 @@ export async function getLatestProducts() {
   }
 }
 
-
 // search produk
 export async function getFilteredProducts(search?: string, categorySlug?: string) {
   try {
     const products = await prisma.product.findMany({
       where: {
-        // Jika ada parameter pencarian, cari berdasarkan nama produk
         name: search ? { contains: search, mode: "insensitive" } : undefined,
-        // Jika ada parameter kategori, filter berdasarkan slug kategori
         category: categorySlug ? { slug: categorySlug } : undefined,
       },
       include: {
@@ -95,11 +91,9 @@ export async function getAllCategories() {
   }
 }
 
-// update
+// update produk
 export async function updateProduct(id: string, data: any) {
   try {
-    // Bersihkan data varian agar hanya mengambil size dan stock
-    // Ini mencegah error bentrok ID bawaan database saat proses edit
     const cleanVariants = data.variants.map((v: any) => ({
       size: v.size,
       stock: Number(v.stock),
@@ -111,16 +105,21 @@ export async function updateProduct(id: string, data: any) {
         name: data.name,
         slug: data.slug,
         description: data.description,
-        price: data.price,
-        discount: data.discount,
+        price: Number(data.price),
+        discount: Number(data.discount) || 0, // <-- Pastikan dikonversi ke angka
         categoryId: data.categoryId,
         images: data.images,
         variants: {
-          deleteMany: {}, // Hapus semua varian lama
-          create: cleanVariants, // Masukkan varian baru yang sudah bersih
+          deleteMany: {},
+          create: cleanVariants,
         },
       },
     });
+
+    revalidatePath("/dashboard/produk");
+    revalidatePath("/produk");
+    revalidatePath(`/produk/${data.slug}`);
+
     return { success: true, message: "Produk berhasil diperbarui!" };
   } catch (error) {
     console.error("Gagal memperbarui produk:", error);
@@ -128,12 +127,9 @@ export async function updateProduct(id: string, data: any) {
   }
 }
 
-
-// delete
+// delete produk
 export async function deleteProduct(id: string) {
   try {
-    // Prisma akan otomatis menghapus varian yang terhubung jika onUpdate/onDelete cascade diatur,
-    // Jika tidak, kita hapus variannya terlebih dahulu secara manual agar tidak error relasi
     await prisma.productVariant.deleteMany({
       where: { productId: id },
     });
@@ -142,6 +138,9 @@ export async function deleteProduct(id: string) {
       where: { id },
     });
     
+    revalidatePath("/dashboard/produk");
+    revalidatePath("/produk");
+
     return { success: true, message: "Produk berhasil dihapus!" };
   } catch (error) {
     console.error("Gagal menghapus produk:", error);
