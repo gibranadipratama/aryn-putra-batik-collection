@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, Package, ShoppingBag, Users, ShieldCheck, 
-  X, ChevronLeft, ChevronRight, MonitorPlay
+  X, ChevronLeft, ChevronRight, MonitorPlay, LogOut
 } from "lucide-react";
 
 interface SidebarProps {
@@ -21,6 +21,7 @@ export default function Sidebar({
   toggleDesktopCollapse 
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -29,6 +30,19 @@ export default function Sidebar({
     { label: "Pelanggan", icon: Users, href: "/dashboard/pelanggan" },
     { label: "Kelola Admin", icon: ShieldCheck, href: "/dashboard/kelola-admin" },
   ];
+
+  // Fungsi untuk menangani proses keluar/logout
+  const handleLogout = async () => {
+    // Jika Anda menggunakan NextAuth, Anda bisa memanggil signOut({ callbackUrl: "/login" })
+    // Atau jika menggunakan cookies/session kustom, hapus token lalu arahkan ke login:
+    try {
+      // Contoh arahkan langsung ke halaman login atau beranda
+      router.push("/login"); // Sesuaikan dengan route halaman login Anda
+      router.refresh();
+    } catch (error) {
+      console.error("Gagal keluar:", error);
+    }
+  };
 
   return (
     <>
@@ -133,6 +147,7 @@ export default function Sidebar({
         {/* MENU BAWAH (Toko & Keluar) */}
         <div className="border-t-2 border-(--color-border) p-5">
           <div className="flex flex-col gap-2">
+            {/* Tombol Lihat Etalase */}
             <Link 
               href="/"
               target="_blank" 
@@ -148,6 +163,22 @@ export default function Sidebar({
                 </div>
               )}
             </Link>
+
+            {/* Tombol Keluar / Logout */}
+            <button 
+              onClick={handleLogout}
+              className={`group relative flex w-full items-center gap-3 rounded-md border-2 border-transparent px-3 py-3 text-red-400 transition-all hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-300 ${isDesktopCollapsed ? "mx-1 justify-center px-0" : ""}`}
+            >
+              <LogOut className="h-5 w-5 shrink-0 transition-transform group-hover:scale-110" />
+              <span className={`whitespace-nowrap text-xs font-bold transition-all duration-300 ${isDesktopCollapsed ? "hidden w-0 opacity-0" : "w-auto opacity-100"}`}>
+                Keluar
+              </span>
+              {isDesktopCollapsed && (
+                <div className="invisible absolute left-16 z-50 whitespace-nowrap rounded-md border-2 border-(--color-border) bg-(--color-surface) px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-(--color-primary-dark) opacity-0 shadow-[4px_4px_0_rgba(139,94,60,0.3)] transition-all group-hover:visible group-hover:opacity-100">
+                  Keluar
+                </div>
+              )}
+            </button>
           </div>
         </div>
       </aside>
