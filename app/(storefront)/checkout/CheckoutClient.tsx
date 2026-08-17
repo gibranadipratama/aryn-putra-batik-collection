@@ -28,8 +28,16 @@ export default function CheckoutClient({ user, cartItems }: { user: any, cartIte
       const res = await processCheckout(user.id);
       
       if (res.success) {
-        toast.success(res.message || "Mengarahkan ke pembayaran...");
-        router.push(`/pesanan/${res.orderNumber}`); 
+        // 👇 PERUBAHAN UTAMA DI SINI 👇
+        if (res.paymentUrl) {
+          toast.success("Mengarahkan ke halaman pembayaran iPaymu...");
+          // Arahkan browser pembeli ke link pembayaran resmi iPaymu
+          window.location.href = res.paymentUrl; 
+        } else {
+          // Fallback jika paymentUrl kosong
+          toast.success(res.message || "Pesanan berhasil dibuat!");
+          router.push(`/pesanan/${res.orderNumber}`); 
+        }
       } else {
         toast.error(res.message || "Gagal memproses pesanan.");
         if (res.requireProfileUpdate) {
