@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Package, ShoppingBag, Users, ShieldCheck, 
   X, ChevronLeft, ChevronRight, MonitorPlay, LogOut
 } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -22,6 +23,15 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  
+  // Mengambil data sesi pengguna yang sedang login
+  const { data: session } = useSession();
+  const user = session?.user as any;
+
+  // Mendapatkan nama dan inisial untuk avatar
+  const userName = user?.name || "Administrator";
+  const userRole = user?.role || "ADMIN";
+  const userInitial = userName.charAt(0).toUpperCase();
 
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -31,16 +41,14 @@ export default function Sidebar({
     { label: "Kelola Admin", icon: ShieldCheck, href: "/dashboard/kelola-admin" },
   ];
 
-  // Fungsi untuk menangani proses keluar/logout
+  // Fungsi untuk menangani proses keluar/logout menggunakan NextAuth signOut
   const handleLogout = async () => {
-    // Jika Anda menggunakan NextAuth, Anda bisa memanggil signOut({ callbackUrl: "/login" })
-    // Atau jika menggunakan cookies/session kustom, hapus token lalu arahkan ke login:
     try {
-      // Contoh arahkan langsung ke halaman login atau beranda
-      router.push("/login"); // Sesuaikan dengan route halaman login Anda
-      router.refresh();
+      await signOut({ callbackUrl: "/login" });
     } catch (error) {
       console.error("Gagal keluar:", error);
+      router.push("/login");
+      router.refresh();
     }
   };
 
@@ -87,14 +95,14 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* INFO PROFIL ADMIN */}
+        {/* INFO PROFIL ADMIN (DINAMIS SESUAI AKUN LOGIN) */}
         <div className={`flex items-center gap-3 border-b-2 border-(--color-border) bg-(--color-border)/10 p-6 transition-all ${isDesktopCollapsed ? "justify-center p-4" : ""}`}>
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border-2 border-(--color-border) bg-(--color-accent) text-sm font-black text-(--color-primary-dark) shadow-[2px_2px_0_rgba(58,40,27,0.4)]">
-            AP
+            {userInitial}
           </div>
           <div className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${isDesktopCollapsed ? "hidden w-0 opacity-0" : "w-auto opacity-100"}`}>
-            <p className="text-xs font-bold text-(--color-surface)">Administrator</p>
-            <p className="text-[9px] uppercase tracking-widest text-(--color-surface)/60">Admin Toko</p>
+            <p className="text-xs font-bold text-(--color-surface) truncate max-w-32.5">{userName}</p>
+            <p className="text-[9px] uppercase tracking-widest text-(--color-surface)/60">{userRole}</p>
           </div>
         </div>
 

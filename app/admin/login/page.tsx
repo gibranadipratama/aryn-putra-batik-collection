@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const handleAdminLogin = async (e: React.FormEvent) => {
+ const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -28,8 +28,8 @@ export default function AdminLoginPage() {
         toast.error("Email atau Password Admin salah!");
       } else {
         toast.success("Login Admin Berhasil!");
-        router.push("/dashboard");
-        router.refresh();
+        
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       toast.error("Terjadi kesalahan sistem.");
