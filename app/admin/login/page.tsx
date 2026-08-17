@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
                 value={formData.email} 
                 onChange={(e) => setFormData({...formData, email: e.target.value})} 
                 className="w-full rounded-md border-2 border-(--color-border) bg-(--color-surface)/10 py-3 pl-10 pr-4 text-xs font-medium text-(--color-surface) outline-none transition-all focus:border-(--color-accent) focus:bg-(--color-surface)/20" 
-                placeholder="admin@arynputra.com"
+                placeholder="admin@gmail.com"
               />
             </div>
           </div>

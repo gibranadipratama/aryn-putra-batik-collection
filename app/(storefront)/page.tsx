@@ -9,7 +9,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-(--color-bg) text-(--color-text-primary) font-sans">
       {/* =====================================================
-          1. HERO SECTION (STRONG BROWN & INVERTED LAYOUT)
+          1. HERO SECTION 
       ====================================================== */}
       <section className="bg-(--color-primary-dark) text-(--color-surface) border-b-4 border-(--color-border)">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 py-12 md:grid-cols-2 md:items-center md:px-8 md:py-20">
@@ -18,7 +18,7 @@ export default async function HomePage() {
           <div className="relative w-full aspect-4/3 md:aspect-4/5 lg:aspect-square order-2 md:order-1">
             <div className="absolute inset-0 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[6px_6px_0_rgba(201,168,118,0.5)]">
               <Image
-                src="/batik-sementara.jpg"
+                src="/kumpulan-batik.png"
                 alt="Model memakai koleksi batik terbaru"
                 fill
                 priority
@@ -143,7 +143,7 @@ export default async function HomePage() {
             href="/kategori/pria"
             className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
           >
-            <Image src="/batik-sementara.jpg" alt="Batik Pria" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <Image src="/batik-pria.png" alt="Batik Pria" fill className="object-cover transition duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-(--color-text-primary) opacity-40 transition-opacity group-hover:opacity-60" />
             <div className="absolute bottom-6 left-6 right-6 border-t-2 border-(--color-accent) pt-4 text-(--color-surface)">
               <h3 className="text-2xl font-bold">Pria</h3>
@@ -156,7 +156,7 @@ export default async function HomePage() {
             href="/kategori/wanita"
             className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
           >
-            <Image src="/batik-sementara.jpg" alt="Batik Wanita" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <Image src="/batik-wanita.png" alt="Batik Wanita" fill className="object-cover transition duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-(--color-text-primary) opacity-40 transition-opacity group-hover:opacity-60" />
             <div className="absolute bottom-6 left-6 right-6 border-t-2 border-(--color-accent) pt-4 text-(--color-surface)">
               <h3 className="text-2xl font-bold">Wanita</h3>
@@ -169,7 +169,7 @@ export default async function HomePage() {
             href="/kategori/couple"
             className="group relative h-90 overflow-hidden rounded-xl border-2 border-(--color-border) shadow-[4px_4px_0_rgba(99,50,26,0.3)]"
           >
-            <Image src="/batik-sementara.jpg" alt="Batik Couple" fill className="object-cover transition duration-700 group-hover:scale-105" />
+            <Image src="/batik-couple.png" alt="Batik Couple" fill className="object-cover transition duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-(--color-primary-dark) opacity-70 transition-opacity group-hover:opacity-80" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-(--color-surface) p-6">
               <h3 className="text-3xl font-bold">Couple</h3>
