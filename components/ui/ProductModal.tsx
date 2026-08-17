@@ -13,6 +13,9 @@ interface ProductModalProps {
   initialData?: any;
 }
 
+// Pilihan standar ukuran baju batik (bisa disesuaikan)
+const AVAILABLE_SIZES = ["S", "M", "L", "XL", "XXL", "XXXL", "All Size"];
+
 export default function ProductModal({
   isOpen,
   onClose,
@@ -111,7 +114,7 @@ export default function ProductModal({
     const finalVariants = variants.filter((v) => v.size.trim() !== "");
 
     if (finalVariants.length === 0) {
-      toast.error("Minimal harus ada 1 ukuran yang diisi!");
+      toast.error("Minimal harus ada 1 ukuran yang dipilih!");
       return;
     }
 
@@ -144,7 +147,7 @@ export default function ProductModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 font-sans">
       <div
         className="absolute inset-0 bg-(--color-text-primary)/70 backdrop-blur-sm transition-opacity"
         onClick={onClose}
@@ -291,21 +294,30 @@ export default function ProductModal({
                   </span>
                 </div>
 
-                <div className="max-h-40 space-y-2 overflow-y-auto pr-2">
+                <div className="max-h-48 space-y-2.5 overflow-y-auto pr-2">
                   {variants.map((v, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 rounded-md border-2 border-(--color-border) bg-(--color-bg) p-1.5"
+                      className="flex items-center gap-2 rounded-md border-2 border-(--color-border) bg-(--color-bg) p-2"
                     >
-                      <input
-                        type="text"
+                      {/* DROPDOWN UKURAN GANTI INPUT KETIK */}
+                      <select
                         value={v.size}
                         onChange={(e) =>
                           handleVariantChange(index, "size", e.target.value)
                         }
-                        className="w-1/3 bg-transparent p-1.5 text-xs font-bold uppercase text-(--color-text-primary) outline-none"
-                        placeholder="Size"
-                      />
+                        className="w-1/3 rounded bg-(--color-surface) p-2 text-xs font-bold uppercase text-(--color-text-primary) outline-none transition focus:border-(--color-primary)"
+                      >
+                        <option value="" disabled>
+                          Pilih
+                        </option>
+                        {AVAILABLE_SIZES.map((sizeOption) => (
+                          <option key={sizeOption} value={sizeOption}>
+                            {sizeOption}
+                          </option>
+                        ))}
+                      </select>
+
                       <div className="flex w-2/3 items-center gap-2">
                         <span className="text-[10px] font-bold text-(--color-text-secondary)">
                           STOK:
@@ -321,7 +333,7 @@ export default function ProductModal({
                               Number(e.target.value),
                             )
                           }
-                          className="w-full rounded bg-(--color-surface) p-1.5 text-xs text-(--color-text-primary) outline-none transition focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary)"
+                          className="w-full rounded bg-(--color-surface) p-2 text-xs text-(--color-text-primary) outline-none transition focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary)"
                         />
                         <button
                           type="button"
@@ -341,7 +353,7 @@ export default function ProductModal({
                 <button
                   type="button"
                   onClick={() =>
-                    setVariants([...variants, { size: "", stock: 0 }])
+                    setVariants([...variants, { size: "M", stock: 0 }])
                   }
                   className="mt-3 w-full rounded-md border-2 border-(--color-primary) py-2.5 text-xs font-bold uppercase text-(--color-primary) transition hover:bg-(--color-primary) hover:text-(--color-surface)"
                 >

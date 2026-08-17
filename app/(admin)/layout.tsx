@@ -1,22 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "@/components/admin/Sidebar"; 
 import { Toaster } from "react-hot-toast";
+import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // State untuk Sidebar HP
+function AdminDashboardContent({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const closeMobileSidebar = () => setIsMobileOpen(false);
 
-  // State untuk Sidebar Desktop (Lebar/Sempit)
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
   const toggleDesktopCollapse = () => setIsDesktopCollapsed(!isDesktopCollapsed);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    } else if (status === "authenticated" && (session?.user as any)?.role !== "ADMIN") {
+      router.replace("/");
+    }
+  }, [status, session, router]);
+
+  if (status === "loading" || (status === "authenticated" && (session?.user as any)?.role !== "ADMIN")) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#E8E0D3] text-[#162A3D]">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0B1F33]/20 border-t-[#A88A3D]" />
+        <p className="mt-4 text-[10px] font-bold uppercase tracking-widest text-[#162A3D]/70">
+          Memverifikasi Akses Admin...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#E8E0D3] text-[#162A3D]">
@@ -37,7 +55,6 @@ export default function AdminLayout({
         }} 
       />
 
-      {/* Mengirimkan State ke Komponen Sidebar */}
       <Sidebar 
         isMobileOpen={isMobileOpen} 
         closeMobileSidebar={closeMobileSidebar}
@@ -45,13 +62,7 @@ export default function AdminLayout({
         toggleDesktopCollapse={toggleDesktopCollapse}
       />
 
-      {/* KONTEN UTAMA: Padding kiri berubah HANYA saat state isDesktopCollapsed berubah */}
-      <div 
-        className={`min-h-screen flex flex-col transition-all duration-300 ease-in-out ${
-          isDesktopCollapsed ? "lg:pl-22" : "lg:pl-64"
-        }`}
-      >
-        {/* HEADER KHUSUS MOBILE & TABLET */}
+      <div className={`flex min-h-screen flex-col transition-all duration-300 ease-in-out ${isDesktopCollapsed ? "lg:pl-22" : "lg:pl-64"}`}>
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#0B1F33]/10 bg-[#E8E0D3]/95 px-5 backdrop-blur-md md:px-8 lg:hidden">
           <button
             onClick={() => setIsMobileOpen(true)}
@@ -67,11 +78,18 @@ export default function AdminLayout({
           </div>
         </header>
         
-        {/* AREA KONTEN HALAMAN */}
         <main className="flex-1 p-5 md:p-8">
           {children}
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AdminDashboardContent>{children}</AdminDashboardContent>
+    </SessionProvider>
   );
 }

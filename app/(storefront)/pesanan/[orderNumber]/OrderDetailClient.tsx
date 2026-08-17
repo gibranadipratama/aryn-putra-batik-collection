@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, MapPin, Phone, CheckCircle2, Circle, XCircle } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, CheckCircle2, Circle, XCircle, AlertTriangle } from "lucide-react";
 
 const formatRupiah = (angka: number) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
@@ -34,12 +34,23 @@ export default function OrderDetailClient({ order }: { order: any }) {
           <p className="text-xs text-(--color-text-secondary)">{formatTanggal(order.createdAt)}</p>
         </div>
 
+        {/* Jika Cancel, tampilkan kotak alasan pembatalan */}
+        {isCancelled && order.cancelReason && (
+          <div className="mb-6 rounded-xl border-2 border-red-300 bg-red-50 p-5 flex items-start gap-3 text-red-900 shadow-sm">
+            <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider">Pesanan Telah Dibatalkan</p>
+              <p className="mt-1 text-xs text-red-800"><span className="font-semibold">Alasan Pembatalan:</span> {order.cancelReason}</p>
+            </div>
+          </div>
+        )}
+
         {/* STEPPER STATUS PESANAN */}
         <div className="mb-6 rounded-xl border-2 border-(--color-border) bg-(--color-surface) p-6 shadow-[4px_4px_0_rgba(139,94,60,0.15)]">
           {isCancelled ? (
             <div className="flex items-center gap-3 text-(--color-danger)">
               <XCircle className="h-5 w-5" />
-              <p className="text-xs font-bold uppercase tracking-widest">Pesanan Dibatalkan</p>
+              <p className="text-xs font-bold uppercase tracking-widest">Status: Dibatalkan</p>
             </div>
           ) : (
             <div className="flex items-center justify-between">

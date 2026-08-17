@@ -186,7 +186,9 @@ export default function PesananClient({ orders }: { orders: any[] }) {
               {filteredOrders.map((order) => (
                 <tr key={order.id} className="transition hover:bg-(--color-bg)">
                   <td className="px-6 py-4">
-                    <p className="font-bold uppercase text-(--color-primary-dark)">{order.orderNumber}</p>
+                    <p className="font-bold uppercase text-(--color-primary-dark)">
+                      {order.orderNumber}
+                    </p>
                     <p className="mt-1 text-[10px] text-(--color-text-secondary)">
                       {formatDate(order.createdAt)}
                     </p>
@@ -276,6 +278,19 @@ export default function PesananClient({ orders }: { orders: any[] }) {
                   </select>
                 </div>
               </div>
+
+              {/* Informasi Alasan Pembatalan (Jika Dibatalkan) */}
+              {selectedOrder.status === "CANCELLED" &&
+                selectedOrder.cancelReason && (
+                  <div className="rounded-md border border-red-300 bg-red-50 p-4 text-red-900 mt-4">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-red-600 mb-1">
+                      Informasi Pembatalan dari Pelanggan
+                    </p>
+                    <p className="text-xs font-semibold">
+                      Alasan: {selectedOrder.cancelReason}
+                    </p>
+                  </div>
+                )}
 
               {/* Daftar Barang */}
               <div>

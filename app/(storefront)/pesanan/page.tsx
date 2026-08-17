@@ -22,5 +22,7 @@ export default async function PesananStorefrontPage() {
   }
 
   const res = await getOrdersByUser(userId);
-  return <OrdersClient orders={res.orders || []} />;
+
+  // 👇 TAMBAHKAN userId={userId} DI SINI 👇
+  return <OrdersClient orders={res.orders || []} userId={userId} />;
 }
