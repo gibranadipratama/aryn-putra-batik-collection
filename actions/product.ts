@@ -39,7 +39,10 @@ export async function createProduct(formData: {
     return { success: true, message: "Produk berhasil ditambahkan!" };
   } catch (error) {
     console.error("Gagal menambah produk:", error);
-    return { success: false, message: "Terjadi kesalahan saat menyimpan produk." };
+    return {
+      success: false,
+      message: "Terjadi kesalahan saat menyimpan produk.",
+    };
   }
 }
 
@@ -51,6 +54,7 @@ export async function getLatestProducts() {
       orderBy: { createdAt: "desc" },
       include: {
         category: true,
+        variants: true,
       },
     });
     return products;
@@ -61,7 +65,10 @@ export async function getLatestProducts() {
 }
 
 // search produk
-export async function getFilteredProducts(search?: string, categorySlug?: string) {
+export async function getFilteredProducts(
+  search?: string,
+  categorySlug?: string,
+) {
   try {
     const products = await prisma.product.findMany({
       where: {
@@ -94,11 +101,7 @@ export async function getAllCategories() {
 // update produk
 export async function updateProduct(id: string, data: any) {
   try {
-    const cleanVariants = data.variants.map((v: any) => ({
-      size: v.size,
-      stock: Number(v.stock),
-    }));
-
+    // 1. Update data dasar produk TANPA menyentuh relasi varian secara massal
     await prisma.product.update({
       where: { id },
       data: {
@@ -106,16 +109,41 @@ export async function updateProduct(id: string, data: any) {
         slug: data.slug,
         description: data.description,
         price: Number(data.price),
-        discount: Number(data.discount) || 0, // <-- Pastikan dikonversi ke angka
+        discount: Number(data.discount) || 0,
         categoryId: data.categoryId,
         images: data.images,
-        variants: {
-          deleteMany: {},
-          create: cleanVariants,
-        },
       },
     });
 
+    // 2. Kelola varian satu per satu secara aman
+    for (const v of data.variants) {
+      // Cari apakah ukuran (size) ini sudah ada untuk produk ini
+      const existingVariant = await prisma.productVariant.findFirst({
+        where: {
+          productId: id,
+          size: v.size,
+        },
+      });
+
+      if (existingVariant) {
+        // Jika ukurannya sudah ada, kita cukup UPDATE stoknya saja
+        await prisma.productVariant.update({
+          where: { id: existingVariant.id },
+          data: { stock: Number(v.stock) },
+        });
+      } else {
+        // Jika ukurannya belum ada, kita CREATE varian baru
+        await prisma.productVariant.create({
+          data: {
+            productId: id,
+            size: v.size,
+            stock: Number(v.stock),
+          },
+        });
+      }
+    }
+
+    // 3. Revalidate cache agar UI langsung berubah
     revalidatePath("/dashboard/produk");
     revalidatePath("/produk");
     revalidatePath(`/produk/${data.slug}`);
@@ -137,13 +165,17 @@ export async function deleteProduct(id: string) {
     await prisma.product.delete({
       where: { id },
     });
-    
+
     revalidatePath("/dashboard/produk");
     revalidatePath("/produk");
 
     return { success: true, message: "Produk berhasil dihapus!" };
   } catch (error) {
     console.error("Gagal menghapus produk:", error);
-    return { success: false, message: "Gagal menghapus produk. Produk mungkin terhubung dengan pesanan." };
+    return {
+      success: false,
+      message:
+        "Gagal menghapus produk. Produk mungkin terhubung dengan pesanan.",
+    };
   }
 }

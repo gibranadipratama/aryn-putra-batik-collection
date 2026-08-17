@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 // 1. Mengambil semua data pesanan (untuk admin)
 export async function getOrders() {
@@ -87,5 +88,55 @@ export async function getOrderDetail(orderNumber: string, userId: string) {
   } catch (error) {
     console.error("Gagal mengambil detail pesanan:", error);
     return { success: false, message: "Gagal mengambil detail pesanan." };
+  }
+}
+
+
+// Batalkan pesanan dengan alasan
+export async function cancelOrder(orderId: string, reason: string) {
+  try {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: "CANCELLED",
+        cancelReason: reason,
+      },
+    });
+
+    revalidatePath("/pesanan");
+    revalidatePath("/dashboard/pesanan");
+    
+    return { success: true, message: "Pesanan berhasil dibatalkan." };
+  } catch (error) {
+    console.error("Error cancelOrder:", error);
+    return { success: false, message: "Gagal membatalkan pesanan." };
+  }
+}
+
+// Hapus riwayat pesanan (khusus pesanan yang sudah dibatalkan/selesai)
+export async function deleteOrderHistory(orderId: string, userId: string) {
+  try {
+    // Pastikan pesanan benar-benar milik user tersebut dan statusnya CANCELLED
+    const order = await prisma.order.findFirst({
+      where: { id: orderId, userId: userId }
+    });
+
+    if (!order) {
+      return { success: false, message: "Pesanan tidak ditemukan." };
+    }
+
+    if (order.status !== "CANCELLED") {
+      return { success: false, message: "Hanya pesanan yang dibatalkan yang dapat dihapus." };
+    }
+
+    // Hapus item terkait dulu lalu hapus order-nya
+    await prisma.orderItem.deleteMany({ where: { orderId: orderId } });
+    await prisma.order.delete({ where: { id: orderId } });
+
+    revalidatePath("/pesanan");
+    return { success: true, message: "Riwayat pesanan berhasil dihapus." };
+  } catch (error) {
+    console.error("Error deleteOrderHistory:", error);
+    return { success: false, message: "Gagal menghapus riwayat pesanan." };
   }
 }

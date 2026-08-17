@@ -17,9 +17,16 @@ export default function ProductDetailClient({ product }: { product: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  // 1. SETTING AWAL: null (Belum ada ukuran yang dipilih agar user wajib memilih)
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
 
   const handleAction = (isBuyNow: boolean) => {
+    // 2. VALIDASI WAJIB PILIH UKURAN
+    if (!selectedVariant) {
+      toast.error("Silakan pilih ukuran terlebih dahulu sebelum memesan.");
+      return;
+    }
+
     if (status === "unauthenticated") {
       toast.error("Silakan masuk (login) untuk melanjutkan transaksi.");
       router.push("/login");
@@ -49,11 +56,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
   };
 
   return (
-    <div className="min-h-screen bg-(--color-bg) py-12 md:py-20 text-(--color-text-primary)">
+    <div className="min-h-screen bg-(--color-bg) py-12 md:py-20 text-(--color-text-primary) font-sans">
       <div className="mx-auto max-w-6xl px-5 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           
-          {/* GALERI GAMBAR - Retro Card Style */}
+          {/* GALERI GAMBAR */}
           <div className="space-y-4">
             <div className="relative aspect-square w-full overflow-hidden rounded-xl border-2 border-(--color-border) bg-(--color-surface) shadow-[8px_8px_0_rgba(139,94,60,0.3)]">
               <Image src={product.images[0] || "/batik-default.jpg"} alt={product.name} fill className="object-cover" />
@@ -81,12 +88,18 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
             <p className="mt-6 text-sm leading-relaxed text-(--color-text-secondary)">{product.description}</p>
 
-            {/* PEMILIH VARIAN */}
+            {/* PEMILIH VARIAN (WAJIB PILIH) */}
             <div className="mt-8">
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-primary)">Pilih Ukuran</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-primary)">
+                  Pilih Ukuran <span className="text-red-500">*</span>
+                </p>
                 <p className="text-xs font-bold text-(--color-text-secondary)">
-                  Sisa Stok: <span className={selectedVariant.stock > 0 ? "text-(--color-primary)" : "text-(--color-danger)"}>{selectedVariant.stock}</span>
+                  {selectedVariant ? (
+                    <>Sisa Stok: <span className={selectedVariant.stock > 0 ? "text-(--color-primary)" : "text-(--color-danger)"}>{selectedVariant.stock}</span></>
+                  ) : (
+                    <span className="text-amber-700 italic">Belum dipilih</span>
+                  )}
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -95,10 +108,10 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     key={variant.id}
                     onClick={() => setSelectedVariant(variant)}
                     className={`h-12 w-14 rounded-md border-2 font-bold transition-all ${
-                      selectedVariant.id === variant.id 
+                      selectedVariant?.id === variant.id 
                         ? "border-(--color-primary-dark) bg-(--color-primary-dark) text-(--color-surface) shadow-[3px_3px_0_rgba(99,50,26,0.5)]" 
                         : "border-(--color-border) bg-(--color-surface) text-(--color-text-primary) hover:-translate-y-0.5 hover:border-(--color-primary) hover:shadow-[2px_2px_0_rgba(139,94,60,0.3)]"
-                    } ${variant.stock === 0 ? "cursor-not-allowed opacity-40" : ""}`}
+                    } ${variant.stock === 0 ? "cursor-not-allowed opacity-40 line-through" : ""}`}
                   >
                     {variant.size}
                   </button>
@@ -106,12 +119,12 @@ export default function ProductDetailClient({ product }: { product: any }) {
               </div>
             </div>
 
-            {/* TOMBOL AKSI GANDA */}
+            {/* TOMBOL AKSI GANDA (Disabled Jika Belum Pilih Ukuran atau Stok 0) */}
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               {/* Tombol Keranjang */}
               <button 
                 onClick={() => handleAction(false)}
-                disabled={isPending || selectedVariant.stock === 0}
+                disabled={isPending || !selectedVariant || selectedVariant.stock === 0}
                 className="flex flex-1 items-center justify-center gap-3 rounded-md border-2 border-(--color-primary-dark) bg-(--color-surface) py-4 text-xs font-bold uppercase tracking-wider text-(--color-primary-dark) shadow-[4px_4px_0_rgba(99,50,26,0.2)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary-dark) hover:text-(--color-surface) disabled:pointer-events-none disabled:opacity-50"
               >
                 <ShoppingBag className="h-4 w-4" /> Masukkan Keranjang
@@ -120,7 +133,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
               {/* Tombol Beli Sekarang */}
               <button 
                 onClick={() => handleAction(true)}
-                disabled={isPending || selectedVariant.stock === 0}
+                disabled={isPending || !selectedVariant || selectedVariant.stock === 0}
                 className="flex flex-1 items-center justify-center gap-3 rounded-md border-2 border-(--color-primary-dark) bg-(--color-primary-dark) py-4 text-xs font-bold uppercase tracking-wider text-(--color-surface) shadow-[4px_4px_0_rgba(99,50,26,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary) disabled:pointer-events-none disabled:opacity-50"
               >
                 Beli Sekarang <ArrowRight className="h-4 w-4" />
