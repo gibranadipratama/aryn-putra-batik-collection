@@ -1,13 +1,15 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-// Catatan: Jika Anda menggunakan NextAuth/Bcrypt, Anda bisa mengimpor bcrypt di sini untuk mengenkripsi password baru.
+import { revalidatePath } from "next/cache";
 
+// 1. Mengambil semua data admin & superadmin
 export async function getAdmins() {
   try {
-    // Mengambil pengguna yang memiliki role ADMIN
     const admins = await prisma.user.findMany({
-      where: { role: "ADMIN" },
+      where: { 
+        role: { in: ["ADMIN", "SUPERADMIN"] } 
+      },
       orderBy: { createdAt: "desc" },
     });
     return admins;
@@ -17,49 +19,90 @@ export async function getAdmins() {
   }
 }
 
-export async function createAdmin(data: any) {
+// 2. Pencarian User/Pelanggan biasa (yang akan diangkat jadi admin)
+export async function searchUsers(query: string) {
+  if (!query || query.trim() === "") return [];
   try {
-    // Pengecekan email agar tidak duplikat
-    const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
-    if (existingUser) return { success: false, message: "Email sudah terdaftar!" };
-
-    await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password: data.password, // Ingat: Di produksi nyata, password ini harus di-hash (misal pakai bcrypt)
-        role: "ADMIN",
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+        role: "USER", // STRICT: Hanya cari yang masih berstatus user biasa
       },
+      take: 5,
     });
-    return { success: true, message: "Admin baru berhasil ditambahkan!" };
+    return users;
   } catch (error) {
-    return { success: false, message: "Gagal menambahkan admin." };
+    console.error("Gagal mencari user:", error);
+    return [];
   }
 }
 
-export async function updateAdmin(id: string, data: any) {
+// 3. Mengangkat user menjadi ADMIN atau SUPERADMIN (Hanya Superadmin)
+export async function promoteToAdmin(userId: string, currentUserEmail: string, roleToAssign: "ADMIN" | "SUPERADMIN" = "ADMIN") {
   try {
-    const updateData: any = { name: data.name, email: data.email };
-    // Update password hanya jika form password diisi
-    if (data.password && data.password.trim() !== "") {
-      updateData.password = data.password; 
+    // STRICT Pengecekan: Pastikan yang mengeksekusi adalah SUPERADMIN
+    const currentUser = await prisma.user.findUnique({ where: { email: currentUserEmail } });
+    if (!currentUser || currentUser.role !== "SUPERADMIN") {
+      return { success: false, message: "Akses ditolak! Hanya Superadmin yang dapat mengangkat admin." };
     }
 
     await prisma.user.update({
-      where: { id },
-      data: updateData,
+      where: { id: userId },
+      data: { role: roleToAssign },
     });
-    return { success: true, message: "Data admin berhasil diperbarui!" };
+
+    revalidatePath("/dashboard/kelola-admin");
+    return { success: true, message: `Berhasil mengangkat pengguna menjadi ${roleToAssign}!` };
   } catch (error) {
-    return { success: false, message: "Gagal memperbarui admin." };
+    console.error("Gagal mengangkat admin:", error);
+    return { success: false, message: "Gagal memproses data." };
   }
 }
 
-export async function deleteAdmin(id: string) {
+// 4. Mengubah role antar ADMIN dan SUPERADMIN (Hanya Superadmin)
+export async function updateAdminRole(userId: string, newRole: "ADMIN" | "SUPERADMIN", currentUserEmail: string) {
   try {
-    await prisma.user.delete({ where: { id } });
-    return { success: true, message: "Admin berhasil dihapus!" };
+    // STRICT Pengecekan: Pastikan yang mengeksekusi adalah SUPERADMIN
+    const currentUser = await prisma.user.findUnique({ where: { email: currentUserEmail } });
+    if (!currentUser || currentUser.role !== "SUPERADMIN") {
+      return { success: false, message: "Akses ditolak! Hanya Superadmin yang dapat mengubah role." };
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: newRole },
+    });
+
+    revalidatePath("/dashboard/kelola-admin");
+    return { success: true, message: `Role berhasil diperbarui menjadi ${newRole}!` };
   } catch (error) {
-    return { success: false, message: "Gagal menghapus admin." };
+    console.error("Gagal mengubah role:", error);
+    return { success: false, message: "Gagal memproses data." };
+  }
+}
+
+// 5. Menurunkan/Mencabut akses admin (Hanya Superadmin)
+export async function revokeAdmin(userId: string, currentUserEmail: string) {
+  try {
+    // STRICT Pengecekan: Pastikan yang mengeksekusi adalah SUPERADMIN
+    const currentUser = await prisma.user.findUnique({ where: { email: currentUserEmail } });
+    if (!currentUser || currentUser.role !== "SUPERADMIN") {
+      return { success: false, message: "Akses ditolak! Hanya Superadmin yang dapat mencabut akses." };
+    }
+
+    // STRICT: Akun TIDAK DIHAPUS, hanya diturunkan pangkatnya menjadi USER biasa
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: "USER" },
+    });
+    
+    revalidatePath("/dashboard/kelola-admin");
+    return { success: true, message: "Akses admin berhasil dicabut. Akun dikembalikan menjadi pelanggan biasa." };
+  } catch (error) {
+    console.error("Gagal mencabut akses:", error);
+    return { success: false, message: "Gagal memproses data." };
   }
 }

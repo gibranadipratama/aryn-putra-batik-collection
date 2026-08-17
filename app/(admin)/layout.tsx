@@ -20,12 +20,21 @@ function AdminDashboardContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login");
-    } else if (status === "authenticated" && (session?.user as any)?.role !== "ADMIN") {
+    } else if (
+      status === "authenticated" && 
+      (session?.user as any)?.role !== "ADMIN" && 
+      (session?.user as any)?.role !== "SUPERADMIN"
+    ) {
       router.replace("/");
     }
   }, [status, session, router]);
 
-  if (status === "loading" || (status === "authenticated" && (session?.user as any)?.role !== "ADMIN")) {
+  if (
+    status === "loading" || 
+    (status === "authenticated" && 
+      (session?.user as any)?.role !== "ADMIN" && 
+      (session?.user as any)?.role !== "SUPERADMIN")
+  ) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#E8E0D3] text-[#162A3D]">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0B1F33]/20 border-t-[#A88A3D]" />
