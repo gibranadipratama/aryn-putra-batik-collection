@@ -30,13 +30,12 @@ export default function Footer() {
             </div>
           </div>
           
-          {/* MENU BANTUAN */}
+          {/* MENU BANTUAN (Retur & Penukaran telah dihapus) */}
           <div className="md:col-span-2">
             <h3 className="mb-5 text-[10px] font-bold uppercase tracking-widest text-(--color-accent)">Bantuan</h3>
             <div className="flex flex-col gap-3 text-xs text-(--color-bg) opacity-90">
               <Link href="/bantuan" className="transition-all hover:text-(--color-accent) hover:translate-x-1">Pusat Bantuan</Link>
               <Link href="/pengiriman" className="transition-all hover:text-(--color-accent) hover:translate-x-1">Informasi Pengiriman</Link>
-              <Link href="/retur" className="transition-all hover:text-(--color-accent) hover:translate-x-1">Retur & Penukaran</Link>
               <Link href="/panduan-ukuran" className="transition-all hover:text-(--color-accent) hover:translate-x-1">Panduan Ukuran</Link>
             </div>
           </div>
