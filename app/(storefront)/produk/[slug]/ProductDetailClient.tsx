@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ShieldCheck, Truck, ArrowRight } from "lucide-react";
+import { ShoppingBag, ShieldCheck, Truck, ArrowRight, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { addToCart } from "@/actions/cart"; 
 
@@ -17,11 +17,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   
-  // 1. SETTING AWAL: null (Belum ada ukuran yang dipilih agar user wajib memilih)
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
 
   const handleAction = (isBuyNow: boolean) => {
-    // 2. VALIDASI WAJIB PILIH UKURAN
     if (!selectedVariant) {
       toast.error("Silakan pilih ukuran terlebih dahulu sebelum memesan.");
       return;
@@ -56,8 +54,19 @@ export default function ProductDetailClient({ product }: { product: any }) {
   };
 
   return (
-    <div className="min-h-screen bg-(--color-bg) py-12 md:py-20 text-(--color-text-primary) font-sans">
-      <div className="mx-auto max-w-6xl px-5 lg:px-8">
+    <div className="min-h-screen bg-(--color-bg) pb-20 text-(--color-text-primary) font-sans">
+      
+      {/* TOMBOL KEMBALI KE HALAMAN SEBELUMNYA SECARA DINAMIS */}
+      <div className="mx-auto max-w-6xl px-5 pt-8 lg:px-8">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 rounded-md border-2 border-(--color-border) bg-(--color-surface) px-4 py-2 text-xs font-bold uppercase tracking-wider text-(--color-primary-dark) shadow-[2px_2px_0_rgba(139,94,60,0.2)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary-dark) hover:text-(--color-surface)"
+        >
+          <ArrowLeft className="h-4 w-4" /> Kembali
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-5 pt-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           
           {/* GALERI GAMBAR */}
@@ -69,7 +78,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
           {/* INFORMASI PRODUK */}
           <div className="flex flex-col">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2)">{product.category.name}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-(--color-accent-2)">{product.category?.name || "Koleksi Batik"}</p>
             <h1 className="mt-2 text-3xl font-black uppercase tracking-wider text-(--color-primary-dark) md:text-5xl">{product.name}</h1>
             
             <div className="mt-6 border-y-2 border-(--color-border) py-4">
@@ -103,7 +112,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
-                {product.variants.map((variant: any) => (
+                {product.variants?.map((variant: any) => (
                   <button
                     key={variant.id}
                     onClick={() => setSelectedVariant(variant)}
@@ -119,9 +128,8 @@ export default function ProductDetailClient({ product }: { product: any }) {
               </div>
             </div>
 
-            {/* TOMBOL AKSI GANDA (Disabled Jika Belum Pilih Ukuran atau Stok 0) */}
+            {/* TOMBOL AKSI GANDA */}
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              {/* Tombol Keranjang */}
               <button 
                 onClick={() => handleAction(false)}
                 disabled={isPending || !selectedVariant || selectedVariant.stock === 0}
@@ -130,7 +138,6 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 <ShoppingBag className="h-4 w-4" /> Masukkan Keranjang
               </button>
 
-              {/* Tombol Beli Sekarang */}
               <button 
                 onClick={() => handleAction(true)}
                 disabled={isPending || !selectedVariant || selectedVariant.stock === 0}
