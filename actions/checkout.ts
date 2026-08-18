@@ -22,25 +22,21 @@ export async function processCheckout(userId: string) {
       return { success: false, message: "Keranjang Anda kosong." };
     }
 
-    // WAJIB: Pastikan pelanggan sudah mengisi alamat dan no HP di profil
     if (!user.phone || !user.address) {
       return {
         success: false,
         requireProfileUpdate: true,
-        message:
-          "Harap lengkapi Alamat dan Nomor HP di pengaturan profil sebelum checkout.",
+        message: "Harap lengkapi Alamat dan Nomor HP di pengaturan profil sebelum checkout.",
       };
     }
 
     let totalAmount = 0;
     const orderItemsData = [];
 
-    // 2. Hitung Total Harga & Siapkan Data Item secara Server-Side
+    // 2. Hitung Total Harga & Siapkan Data Item
     for (const item of user.cart.items) {
       const product = item.variant.product;
-
       const discountValue = product.discount ?? 0;
-
       const finalPrice =
         discountValue > 0
           ? product.price - (product.price * discountValue) / 100
@@ -61,8 +57,20 @@ export async function processCheckout(userId: string) {
       });
     }
 
-    // 4. Buat Nomor Invoice Unik & Simpan Data Pesanan (Order)
+    // 4. Request URL Pembayaran ke iPaymu TERLEBIH DAHULU (agar URL-nya dapat)
     const orderNumber = `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
+    const paymentResult = await createIpaymuPayment({
+      orderId: orderNumber,
+      amount: totalAmount,
+      buyerName: user.name || "Pelanggan",
+      buyerEmail: user.email,
+      buyerPhone: user.phone || "080000000000",
+    });
+
+    const paymentUrl = paymentResult.success && paymentResult.paymentUrl ? paymentResult.paymentUrl : null;
+
+    // 5. Simpan Data Pesanan (Order) BESERTA paymentUrl ke Database
     const order = await prisma.order.create({
       data: {
         orderNumber,
@@ -72,39 +80,29 @@ export async function processCheckout(userId: string) {
         shippingAddress: user.address,
         customerName: user.name || "Pelanggan",
         customerPhone: user.phone,
+        paymentUrl: paymentUrl,
         items: {
           create: orderItemsData,
         },
       },
     });
 
-    // 5. Kosongkan Keranjang Belanja
+    // 6. Kosongkan Keranjang Belanja
     await prisma.cartItem.deleteMany({
       where: { cartId: user.cart.id },
     });
 
     revalidatePath("/keranjang");
 
-    const paymentResult = await createIpaymuPayment({
-      orderId: order.orderNumber, // Gunakan nomor invoice
-      amount: totalAmount,        // Total harga dari kalkulasi keranjang
-      buyerName: user.name || "Pelanggan",
-      buyerEmail: user.email,
-      buyerPhone: user.phone || "080000000000",
-    });
-
-    if (paymentResult.success && paymentResult.paymentUrl) {
-      // Jika berhasil tembus ke iPaymu, kembalikan URL pembayaran ke frontend
+    if (paymentUrl) {
       return { 
         success: true, 
         orderId: order.id, 
         orderNumber: order.orderNumber, 
-        paymentUrl: paymentResult.paymentUrl, // <-- URL INI YANG AKAN DIBUKA PEMBELI
+        paymentUrl: paymentUrl, 
         message: "Pesanan dibuat! Mengarahkan ke pembayaran..." 
       };
     } else {
-      // Jika iPaymu sedang error, pesanan tetap tersimpan sebagai PENDING, 
-      // tapi kita beritahu user bahwa sistem pembayaran sedang gangguan
       return {
         success: true,
         orderId: order.id,
@@ -119,4 +117,3 @@ export async function processCheckout(userId: string) {
     return { success: false, message: "Terjadi kesalahan sistem saat checkout." };
   }
 }
-

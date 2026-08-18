@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, MapPin, Phone, CheckCircle2, Circle, XCircle, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, CheckCircle2, Circle, XCircle, AlertTriangle, CreditCard } from "lucide-react";
 
 const formatRupiah = (angka: number) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
@@ -19,6 +19,7 @@ const steps = [
 
 export default function OrderDetailClient({ order }: { order: any }) {
   const isCancelled = order.status === "CANCELLED";
+  const isPending = order.status === "PENDING";
   const currentStepIndex = steps.findIndex((s) => s.key === order.status);
   const subtotal = order.items.reduce((total: number, item: any) => total + item.price * item.quantity, 0);
 
@@ -30,8 +31,22 @@ export default function OrderDetailClient({ order }: { order: any }) {
         </Link>
 
         <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-2xl font-black uppercase tracking-wider text-(--color-primary-dark) md:text-3xl">{order.orderNumber}</h1>
-          <p className="text-xs text-(--color-text-secondary)">{formatTanggal(order.createdAt)}</p>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-wider text-(--color-primary-dark) md:text-3xl">{order.orderNumber}</h1>
+            <p className="text-xs text-(--color-text-secondary) mt-1">{formatTanggal(order.createdAt)}</p>
+          </div>
+
+          {/* TOMBOL BAYAR SEKARANG JIKA STATUS MASIH PENDING */}
+          {isPending && order.paymentUrl && (
+            <a
+              href={order.paymentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-(--color-primary-dark) bg-(--color-primary-dark) px-6 py-3 text-xs font-bold uppercase tracking-widest text-(--color-surface) shadow-[4px_4px_0_rgba(99,50,26,0.4)] transition-all hover:-translate-y-0.5 hover:bg-(--color-primary)"
+            >
+              <CreditCard className="h-4 w-4" /> Lanjut Pembayaran (iPaymu)
+            </a>
+          )}
         </div>
 
         {/* Jika Cancel, tampilkan kotak alasan pembatalan */}
@@ -126,6 +141,20 @@ export default function OrderDetailClient({ order }: { order: any }) {
                 <span className="text-xs font-bold uppercase tracking-widest">Total</span>
                 <span className="text-lg font-black text-(--color-accent)">{formatRupiah(order.totalAmount)}</span>
               </div>
+
+              {/* Tombol alternatif di dalam card ringkasan jika status PENDING */}
+              {isPending && order.paymentUrl && (
+                <div className="mt-6 pt-4 border-t border-(--color-border)">
+                  <a
+                    href={order.paymentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-md bg-(--color-accent) py-3 text-xs font-bold uppercase tracking-widest text-(--color-primary-dark) shadow-md transition hover:brightness-110"
+                  >
+                    <CreditCard className="h-4 w-4" /> Bayar Sekarang
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
