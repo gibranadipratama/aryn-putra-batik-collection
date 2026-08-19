@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { getCart } from "@/actions/cart";
 import CartClient from "./CartClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function CartPage() {
   // 1. Ambil sesi pengguna yang sedang aktif
     const session = await getServerSession(authOptions);

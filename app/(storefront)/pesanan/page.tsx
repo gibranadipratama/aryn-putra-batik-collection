@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { getOrdersByUser } from "@/actions/order";
 import OrdersClient from "./OrdersClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function PesananStorefrontPage() {
   const session = await getServerSession(authOptions);
 

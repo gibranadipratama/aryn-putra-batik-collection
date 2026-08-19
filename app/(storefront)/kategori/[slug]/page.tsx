@@ -1,6 +1,8 @@
 import { getProductsByCategorySlug } from "@/actions/storefront";
 import CategoryClient from "./CategoryClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   
   const resolvedParams = await params;
