@@ -6,7 +6,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, ShieldCheck, Truck, ArrowRight, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { addToCart } from "@/actions/cart"; 
+import { addToCart } from "@/actions/cart";
+
+export const dynamic = "force-dynamic";
 
 const formatRupiah = (angka: number) => {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);

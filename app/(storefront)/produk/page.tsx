@@ -3,6 +3,8 @@ import { Search } from "lucide-react";
 import { getFilteredProducts } from "@/actions/product";
 import ProductCard from "@/components/ui/ProductCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function KatalogPage({
   searchParams,
 }: {

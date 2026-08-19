@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { getOrderDetail } from "@/actions/order";
 import OrderDetailClient from "./OrderDetailClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OrderDetailPage({
   params,
 }: {

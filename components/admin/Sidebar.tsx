@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, Package, ShoppingBag, Users, ShieldCheck, 
-  X, ChevronLeft, ChevronRight, MonitorPlay, LogOut
+  X, ChevronLeft, ChevronRight, MonitorPlay, LogOut,
+  Wallet 
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
@@ -33,11 +34,14 @@ export default function Sidebar({
   const userRole = user?.role || "ADMIN";
   const userInitial = userName.charAt(0).toUpperCase();
 
+  // 2. DAFTAR MENU
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { label: "Produk", icon: Package, href: "/dashboard/produk" },
     { label: "Pesanan", icon: ShoppingBag, href: "/dashboard/pesanan" },
     { label: "Pelanggan", icon: Users, href: "/dashboard/pelanggan" },
+    // HANYA TAMPIL JIKA SUPERADMIN
+    ...(userRole === "SUPERADMIN" ? [{ label: "Keuangan", icon: Wallet, href: "/dashboard/keuangan" }] : []),
     { label: "Kelola Admin", icon: ShieldCheck, href: "/dashboard/kelola-admin" },
   ];
 

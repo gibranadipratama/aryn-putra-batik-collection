@@ -3,6 +3,8 @@ import AdminClient from "./AdminClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   // Ambil daftar admin
   const admins = await getAdmins();
